@@ -1,0 +1,950 @@
+<title>Publish Snapshot Prototype</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #ffffff;
+    --bg-2: #f6f7f9;
+    --bg-3: #eef0f2;
+    --line: #dde1e4;
+    --line-2: #eceff1;
+    --ink: #11171a;
+    --ink-2: #445a66;
+    --muted: #5f7281;
+    --faint: #8a98a3;
+    --blue: #2272b4;
+    --blue-2: #1b5fa0;
+    --blue-bg: #e8f0f8;
+    --red: #ff3621;
+    --red-bg: #fdecea;
+    --green: #1b7a45;
+    --green-bg: #e6f4ea;
+    --amber: #a86400;
+    --amber-bg: #fff6e5;
+    --chart: #2272b4;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg-3); color: var(--ink); font-family: var(--font); font-size: 13px; line-height: 1.45; }
+  button, input, select { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 1px; }
+  code, pre { font-family: var(--mono); font-size: 12px; }
+  a { color: var(--blue); }
+
+  /* ---------- guided tour ---------- */
+  .tour-hl { position: fixed; z-index: 40; border-radius: 6px; box-shadow: 0 0 0 9999px rgba(17,23,26,.45), 0 0 0 2px var(--blue); pointer-events: none; transition: top .2s, left .2s, width .2s, height .2s; }
+  .tour-hl.center { box-shadow: 0 0 0 9999px rgba(17,23,26,.45); }
+  .tour-card { position: fixed; z-index: 41; width: 320px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 10px 30px rgba(17,23,26,.25); padding: 12px 14px; }
+  .tour-card::before { content: ""; position: absolute; width: 10px; height: 10px; background: var(--bg); border-left: 1px solid var(--line); border-top: 1px solid var(--line); transform: rotate(45deg); left: 24px; top: -6px; }
+  .tour-card.above::before { top: auto; bottom: -6px; transform: rotate(225deg); }
+  .tour-card.center::before { display: none; }
+  .tour-card.center { width: 400px; }
+  .tour-step { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+  .tour-text { color: var(--ink); margin-bottom: 10px; line-height: 1.5; }
+  .tour-text strong { font-weight: 600; }
+  .tour-btns { display: flex; gap: 6px; align-items: center; }
+  .tour-hl[hidden], .tour-card[hidden] { display: none; }
+  .helppop { position: fixed; right: 18px; bottom: 62px; width: 360px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 10px 30px rgba(17,23,26,.22); z-index: 16; }
+  .helppop[hidden] { display: none; }
+  .hp-hd { display: flex; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); }
+  .hp-hd .x { margin-left: auto; border: 0; background: transparent; font-size: 18px; color: var(--muted); padding: 0 4px; }
+  .flow { list-style: none; margin: 0; padding: 10px 14px 4px; position: relative; }
+  .flow li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 6px 0 10px; position: relative; }
+  .flow li::before { content: ""; position: absolute; left: 10px; top: 28px; bottom: -2px; width: 1px; background: var(--line); }
+  .flow li:last-child::before { display: none; }
+  .flow .n { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); display: grid; place-items: center; font-size: 11px; font-weight: 600; color: var(--muted); position: relative; z-index: 1; }
+  .flow li[aria-current="step"] .n { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .flow .lnk { border: 0; background: transparent; padding: 0; font-weight: 600; color: var(--ink); text-align: left; }
+  .flow .lnk:hover { color: var(--blue); }
+  .flow li[aria-current="step"] .lnk { color: var(--blue); }
+  .flow .d { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .hp-ft { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--line); }
+  .hp-ft .draft { margin-left: auto; font-size: 11px; text-align: right; }
+  .hp-ft .btn { white-space: nowrap; }
+  .help { position: fixed; right: 18px; bottom: 18px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); color: var(--ink-2); font-weight: 600; box-shadow: 0 2px 8px rgba(17,23,26,.15); z-index: 15; }
+  .help:hover { background: var(--bg-2); }
+  .help[aria-expanded="true"] { background: var(--blue); color: #fff; border-color: var(--blue); }
+  @media (prefers-reduced-motion: reduce) { .tour-hl { transition: none; } }
+  /* ---------- shell ---------- */
+  .shell { background: var(--bg); min-height: 100vh; display: grid; grid-template-rows: 52px 1fr; }
+  .top { display: grid; grid-template-columns: 1fr minmax(320px, 620px) 1fr; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--line); gap: 12px; }
+  .top .left { display: flex; align-items: center; gap: 14px; }
+  .top .right { display: flex; align-items: center; gap: 12px; justify-content: flex-end; }
+  .logo { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 15px; letter-spacing: -.01em; line-height: 1; }
+  .logo .mark { width: 16px; height: 16px; background: var(--red); border-radius: 3px 3px 3px 8px; }
+  .logo small { display: block; font-size: 9px; font-weight: 500; color: var(--muted); margin-top: 2px; letter-spacing: 0; }
+  .proto-tag { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 1px 6px; margin-left: 4px; }
+  .search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; color: var(--faint); background: var(--bg); }
+  .search span:last-child { margin-left: auto; font-size: 11px; }
+  .verify { background: var(--blue-bg); color: var(--blue); border-radius: 999px; padding: 4px 12px; font-weight: 500; }
+  .ws { color: var(--ink); font-weight: 500; }
+  .iconbtn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid transparent; background: transparent; display: grid; place-items: center; color: var(--muted); }
+  .iconbtn.genie { background: #f6eaf3; color: #b03a8a; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: #2c3e50; color: #fff; display: grid; place-items: center; font-weight: 600; font-size: 12px; }
+  .body { display: grid; grid-template-columns: 224px 1fr; min-height: 0; }
+  @media (max-width: 900px) { .body { grid-template-columns: 1fr; } .side { display: none; } }
+
+  /* ---------- sidebar ---------- */
+  .side { border-right: 1px solid var(--line); padding: 12px 10px; overflow: auto; }
+  .newbtn { width: 100%; display: flex; align-items: center; gap: 10px; background: var(--red-bg); border: 0; border-radius: 6px; padding: 9px 14px; font-weight: 600; color: var(--ink); margin-bottom: 10px; }
+  .newbtn .plus { color: var(--red); font-size: 18px; line-height: 1; }
+  .nav a { display: flex; align-items: center; gap: 10px; padding: 6px 10px; border-radius: 6px; color: var(--ink); text-decoration: none; font-size: 13px; }
+  .nav a:hover { background: var(--bg-2); }
+  .nav a[aria-current="page"] { background: var(--blue-bg); color: var(--blue); font-weight: 600; }
+  .nav a .i { width: 16px; height: 16px; color: var(--muted); flex: none; }
+  .nav a[aria-current="page"] .i { color: var(--blue); }
+  .nav .grp { font-size: 11px; color: var(--muted); margin: 12px 10px 4px; }
+  .badge-new { font-size: 9px; letter-spacing: .06em; text-transform: uppercase; color: var(--red); border: 1px solid #f7b8ae; border-radius: 3px; padding: 0 4px; margin-left: 4px; }
+
+  /* ---------- content ---------- */
+  .content { display: grid; grid-template-rows: 40px 1fr; min-width: 0; }
+  .filetabs { display: flex; align-items: stretch; border-bottom: 1px solid var(--line); background: var(--bg-2); }
+  .filetab { display: flex; align-items: center; gap: 8px; padding: 0 14px; border-right: 1px solid var(--line); color: var(--muted); font-size: 13px; background: transparent; border-top: 0; border-bottom: 0; border-left: 0; }
+  .filetab[aria-selected="true"] { background: var(--bg); color: var(--ink); font-weight: 500; }
+  .filetab .ico { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }
+  .ico.dash { background: var(--blue); }
+  .ico.nb { background: #d9822b; }
+  .filetab .x { color: var(--faint); margin-left: 4px; }
+  .filetabs .plus { padding: 0 12px; color: var(--muted); background: transparent; border: 0; border-right: 1px solid var(--line); }
+  .pane { padding: 16px 22px 26px; min-width: 0; }
+  .titlerow { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .titlerow h1 { font-size: 20px; font-weight: 600; margin: 0; letter-spacing: -.01em; }
+  .titlerow .star { color: var(--faint); font-size: 16px; }
+  .titlerow .spacer { flex: 1; }
+  .btn { border: 1px solid var(--line); background: var(--bg); border-radius: 4px; padding: 6px 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; line-height: 1.2; }
+  .btn:hover { background: var(--bg-2); }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn.primary { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .btn.primary:hover { background: var(--blue-2); }
+  .btn.danger { color: #b3261e; }
+  .btn.sm { padding: 3px 9px; font-size: 12px; }
+  .btn.link { border-color: transparent; color: var(--blue); padding-left: 6px; padding-right: 6px; }
+  .draft { color: var(--muted); font-size: 12px; }
+  .subtabs { display: flex; align-items: center; gap: 2px; border-bottom: 1px solid var(--line); margin-bottom: 10px; }
+  .subtabs button { border: 0; background: transparent; padding: 8px 12px; border-bottom: 2px solid transparent; margin-bottom: -1px; color: var(--ink-2); display: inline-flex; gap: 8px; align-items: center; }
+  .subtabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--blue); font-weight: 600; }
+  .subtabs .sep { width: 1px; height: 18px; background: var(--line); margin: 0 4px; }
+  .subtabs .plus { color: var(--muted); font-size: 16px; }
+  .gfilters { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; color: var(--ink-2); margin-bottom: 10px; }
+  .canvas { position: relative; border: 1px solid var(--line-2); background-color: var(--bg); background-image: radial-gradient(var(--line) 1px, transparent 1px); background-size: 16px 16px; padding: 16px; min-height: 420px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 12px; }
+  .widget { background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; }
+  .widget .lbl { font-size: 12px; color: var(--muted); }
+  .widget .val { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .widget h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; }
+  .widget svg { width: 100%; height: auto; display: block; }
+  svg text { font-family: var(--font); font-size: 11px; fill: var(--muted); }
+  .grid32 { display: grid; grid-template-columns: 3fr 2fr; gap: 12px; }
+  @media (max-width: 760px) { .grid4 { grid-template-columns: repeat(2, 1fr); } .grid32 { grid-template-columns: 1fr; } }
+  .floatbar { position: absolute; left: 50%; bottom: 12px; transform: translateX(-50%); background: var(--bg); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 4px 14px rgba(17,23,26,.12); padding: 6px 8px; display: flex; gap: 4px; }
+  .floatbar span { width: 28px; height: 28px; border-radius: 4px; display: grid; place-items: center; color: var(--ink-2); }
+  .floatbar span.on { background: var(--blue-bg); color: var(--blue); }
+  .floatbar span.g { color: #b03a8a; }
+  .floatbar i { width: 1px; background: var(--line); margin: 4px 4px; }
+
+  /* data tab */
+  .datatab { display: grid; grid-template-columns: 220px 1fr; border: 1px solid var(--line); min-height: 420px; }
+  .dslist { border-right: 1px solid var(--line); background: var(--bg-2); padding: 8px; }
+  .dslist .h { font-size: 11px; color: var(--muted); margin: 4px 6px 6px; }
+  .dslist button { width: 100%; text-align: left; border: 0; background: transparent; padding: 6px 8px; border-radius: 4px; display: flex; gap: 8px; align-items: center; }
+  .dslist button[aria-selected="true"] { background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); font-weight: 600; }
+  .dsbody { padding: 12px 14px; min-width: 0; }
+  .dsbody .h2 { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .dsbody .h2 strong { font-size: 14px; }
+  pre.sql { margin: 0 0 10px; padding: 10px 12px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 4px; overflow-x: auto; white-space: pre; line-height: 1.5; }
+  table.res { border-collapse: collapse; width: auto; }
+  table.res th, table.res td { padding: 5px 12px; border-bottom: 1px solid var(--line-2); text-align: left; font-variant-numeric: tabular-nums; font-size: 12px; }
+  table.res th { font-weight: 600; color: var(--ink-2); background: var(--bg-2); border-bottom: 1px solid var(--line); }
+  .rows { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  /* notebook */
+  .nbbar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+  .nbbar .pill { border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; color: var(--ink-2); display: inline-flex; gap: 6px; align-items: center; }
+  .nbbar .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .cells { display: grid; gap: 8px; }
+  .cell { border: 1px solid var(--line); border-radius: 4px; background: var(--bg); overflow: hidden; }
+  .cell .hd { display: flex; align-items: center; gap: 8px; padding: 3px 10px; font-size: 11px; color: var(--faint); background: var(--bg-2); border-bottom: 1px solid var(--line-2); }
+  .cell .hd .lang { text-transform: uppercase; letter-spacing: .06em; font-family: var(--mono); }
+  .cell pre { margin: 0; padding: 8px 12px; white-space: pre; overflow-x: auto; line-height: 1.5; }
+  .cell .out { border-top: 1px dashed var(--line); padding: 8px 12px; }
+  .cell .out.hid { background: var(--amber-bg); color: var(--amber); font-style: italic; }
+  .cell .md { padding: 10px 12px; }
+  .cell .md h3 { margin: 0 0 4px; font-size: 15px; }
+  .cell .md p { margin: 0; color: var(--ink-2); }
+  .cell .flag { color: var(--amber); font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+  .cell svg { max-width: 520px; width: 100%; height: auto; display: block; }
+  .codehidden .cell pre { display: none; }
+
+
+  /* catalog explorer panel */
+  .cat { display: grid; grid-template-columns: 220px 1fr; border: 1px solid var(--line); min-height: 380px; }
+  .cat .tree { border-right: 1px solid var(--line); background: var(--bg-2); padding: 8px; font-size: 13px; }
+  .cat .tree .h { font-size: 11px; color: var(--muted); margin: 4px 6px 6px; }
+  .cat .tree .node { padding: 4px 6px; color: var(--ink-2); display: flex; gap: 6px; align-items: center; }
+  .cat .tree button { width: 100%; text-align: left; border: 0; background: transparent; padding: 5px 8px 5px 28px; border-radius: 4px; display: flex; gap: 8px; align-items: center; }
+  .cat .tree button[aria-selected="true"] { background: var(--bg); box-shadow: inset 0 0 0 1px var(--line); font-weight: 600; }
+  .cat .main { padding: 12px 14px; min-width: 0; }
+  .cat .crumb { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  .cat .th { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .cat .th strong { font-size: 15px; }
+  .cat .tag { border: 1px solid var(--line); border-radius: 3px; padding: 1px 6px; font-size: 11px; color: var(--muted); }
+  .cat .desc { color: var(--ink-2); margin-bottom: 8px; }
+  .kv { display: grid; grid-template-columns: 160px 1fr; gap: 4px 12px; font-size: 12.5px; }
+  .kv dt { color: var(--muted); }
+  .kv dd { margin: 0; }
+  .removed { color: var(--amber); font-style: italic; }
+
+  /* ---------- dialogs ---------- */
+  .scrim { position: fixed; inset: 0; background: rgba(17,23,26,.4); display: none; align-items: flex-start; justify-content: center; padding: 28px 16px; overflow: auto; z-index: 20; }
+  .scrim[data-open="true"] { display: flex; }
+  .dlg { background: var(--bg); border-radius: 6px; width: 100%; max-width: 720px; box-shadow: 0 12px 40px rgba(17,23,26,.28); }
+  .dlg .hd { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--line); }
+  .dlg .hd h2 { margin: 0; font-size: 16px; font-weight: 600; }
+  .dlg .hd .x { margin-left: auto; border: 0; background: transparent; font-size: 18px; color: var(--muted); padding: 2px 6px; border-radius: 4px; }
+  .dlg .bd { padding: 16px 20px; }
+  .dlg .ft { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 20px; border-top: 1px solid var(--line); align-items: center; }
+  .dlg .ft .hint { margin-right: auto; font-size: 12px; color: var(--muted); }
+  .field { margin-bottom: 12px; }
+  .field label, .field .lbl { display: block; font-weight: 600; margin-bottom: 4px; }
+  .field .help { font-size: 12px; color: var(--muted); margin-top: 3px; }
+  .in { width: 100%; border: 1px solid var(--line); border-radius: 4px; padding: 7px 10px; background: var(--bg); }
+  select.in { width: auto; }
+  .mode { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 4px; padding: 10px 12px; margin-bottom: 8px; }
+  .mode input { margin-top: 3px; }
+  .mode .d { color: var(--muted); font-size: 12px; }
+  .mode[data-on="true"] { border-color: var(--blue); background: #f7fafd; }
+  .section { border-top: 1px solid var(--line-2); padding-top: 12px; margin-top: 12px; }
+  .section h3 { margin: 0 0 8px; font-size: 13px; font-weight: 600; }
+  .incl { border: 1px solid var(--line); border-radius: 4px; }
+  .incl .ir { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--line-2); }
+  .incl .ir:first-child { border-top: 0; }
+  .incl .ir.sub { padding-left: 40px; background: var(--bg-2); }
+  .incl .ir label { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .incl .ir .cnt { color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .incl .ir select { margin-left: auto; }
+  .incl .ir .r { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
+  .incl .help { font-size: 12px; color: var(--muted); padding: 6px 12px 8px 40px; background: var(--bg-2); border-top: 1px solid var(--line-2); }
+  .scan { border: 1px solid var(--line); border-radius: 4px; padding: 6px 12px 8px; margin-top: 10px; }
+  .scan .h { display: flex; align-items: center; gap: 8px; padding: 6px 0 6px; }
+  .scan .h .gi { width: 20px; height: 20px; border-radius: 5px; background: #f6eaf3; color: #b03a8a; display: grid; place-items: center; flex: none; }
+  .scan .h strong { font-weight: 600; }
+  .scan .h .sub { color: var(--muted); font-size: 12px; }
+  .scan .h .re { margin-left: auto; font-size: 12px; color: var(--blue); background: transparent; border: 0; padding: 0; }
+  .scan .summary { color: var(--ink-2); padding: 0 0 6px 28px; font-size: 12.5px; }
+  .scan .row { display: flex; gap: 10px; align-items: center; padding: 5px 0; border-top: 1px solid var(--line-2); }
+  .scan .row:first-of-type { border-top: 0; }
+  .scan .ic { width: 16px; height: 16px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: #fff; line-height: 1; }
+  .scan .ic.ok { background: var(--green); }
+  .scan .ic.warn { background: var(--amber); }
+  .scan .row .t { flex: 1; min-width: 0; }
+  .scan .row .acts { display: flex; gap: 6px; flex: none; }
+  .scan .kept { color: var(--muted); font-size: 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; border: 1px solid var(--line); border-radius: 4px; padding: 5px 8px; }
+  .chips[hidden], #snap-opts[hidden], #account-opts[hidden], #code-opt[hidden], #nb-data-panel[hidden] { display: none; }
+  .chip { background: var(--blue-bg); color: var(--blue); border-radius: 3px; padding: 2px 8px; font-size: 12px; display: inline-flex; gap: 6px; align-items: center; }
+  .chip button { border: 0; background: transparent; padding: 0; color: inherit; line-height: 1; }
+  .chips input { border: 0; flex: 1; min-width: 160px; padding: 2px; }
+  .chips input:focus { outline: none; }
+  .rowf { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+  .rowf label { display: inline-flex; gap: 6px; align-items: center; }
+  .today { border-left: 3px solid var(--blue); background: var(--bg-2); padding: 8px 12px; font-size: 12px; color: var(--ink-2); margin-bottom: 12px; }
+  .people { border: 1px solid var(--line); border-radius: 4px; margin-bottom: 10px; }
+  .people div { display: flex; justify-content: space-between; padding: 7px 10px; border-top: 1px solid var(--line-2); }
+  .people div:first-child { border-top: 0; background: var(--bg-2); font-weight: 600; }
+  .linkbox { font-family: var(--mono); font-size: 12px; background: var(--bg-2); border: 1px solid var(--line); border-radius: 4px; padding: 7px 10px; word-break: break-all; }
+  .ok-box { border: 1px solid #bfe0cb; background: var(--green-bg); border-radius: 4px; padding: 10px 12px; margin-bottom: 12px; }
+  .toast { position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 8px 14px; border-radius: 4px; font-size: 12px; opacity: 0; pointer-events: none; transition: opacity .15s; z-index: 30; }
+  .toast[data-show="true"] { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { .toast { transition: none; } }
+
+  /* ---------- viewer mode (whole window becomes the visitor's browser) ---------- */
+  body.viewer-mode { background: #d9dee2; }
+  body.viewer-mode .shell { background: transparent; grid-template-rows: 1fr; }
+  body.viewer-mode .top, body.viewer-mode .side, body.viewer-mode .filetabs { display: none; }
+  body.viewer-mode .body { grid-template-columns: 1fr; }
+  body.viewer-mode .pane { padding: 14px 22px 30px; max-width: 1240px; margin: 0 auto; width: 100%; }
+  .previewbar { display: flex; align-items: center; gap: 12px; background: var(--ink); color: #fff; border-radius: 6px; padding: 8px 14px; margin-bottom: 12px; font-size: 13px; }
+  .previewbar .eye { width: 22px; height: 22px; border-radius: 50%; background: #34434b; display: grid; place-items: center; flex: none; }
+  .previewbar .t strong { font-weight: 600; }
+  .previewbar .t span { color: #c5cdd2; }
+  .previewbar .acts { margin-left: auto; display: flex; gap: 6px; }
+  .previewbar .btn { background: transparent; color: #fff; border-color: #56656d; }
+  .previewbar .btn:hover { background: #2b383f; }
+  .previewbar .btn.primary { background: #fff; color: var(--ink); border-color: #fff; }
+  .previewbar .btn.primary:hover { background: #e8ecef; }
+  body.viewer-mode .browser { box-shadow: 0 10px 30px rgba(17,23,26,.18); }
+
+  /* ---------- viewer ---------- */
+  .browser { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--bg); }
+  .chrome { display: flex; align-items: center; gap: 10px; background: var(--bg-3); padding: 7px 12px; border-bottom: 1px solid var(--line); }
+  .chrome .dots span { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #c5ced3; margin-right: 4px; }
+  .chrome .url { flex: 1; background: var(--bg); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-family: var(--mono); font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chrome .who { font-size: 11px; color: var(--muted); border: 1px solid var(--line); border-radius: 999px; padding: 2px 8px; white-space: nowrap; background: var(--bg); }
+  .vhead { padding: 18px 24px 0; display: flex; align-items: flex-start; gap: 12px; }
+  .vhead h2 { margin: 0 0 4px; font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
+  .vmeta { color: var(--muted); font-size: 12px; }
+  .vdesc { color: var(--ink-2); margin-top: 4px; }
+  .vhead .actions { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+  .vbody { padding: 10px 24px 18px; }
+  .vfoot { display: flex; align-items: center; gap: 16px; padding: 14px 24px; border-top: 1px solid var(--line); background: var(--bg-2); font-size: 12px; color: var(--muted); flex-wrap: wrap; }
+  .vfoot .brand { display: flex; align-items: center; gap: 7px; color: var(--ink); font-weight: 600; }
+  .vfoot .brand .mark { width: 12px; height: 12px; background: var(--red); border-radius: 2px 2px 2px 6px; }
+  .vfoot .right { margin-left: auto; display: flex; gap: 8px; }
+  .gate { padding: 44px 24px; text-align: center; max-width: 440px; margin: 0 auto; }
+  .gate h2 { font-size: 18px; margin: 0 0 6px; }
+  .gate p { color: var(--muted); margin: 0 0 14px; }
+  .gone { padding: 56px 24px; text-align: center; color: var(--muted); }
+  .gone h2 { color: var(--ink); font-size: 18px; margin: 0 0 6px; }
+
+  /* ---------- manage ---------- */
+  table.list { width: 100%; border-collapse: collapse; }
+  table.list th, table.list td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  table.list th { font-size: 12px; color: var(--muted); font-weight: 600; background: var(--bg-2); }
+  .name { font-weight: 600; display: flex; gap: 8px; align-items: center; }
+  .sub { color: var(--muted); font-size: 12px; }
+  .status { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; }
+  .status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .status.live { color: var(--green); }
+  .status.off { color: #b3261e; }
+  .tacts { display: flex; gap: 6px; flex-wrap: wrap; }
+  .confirm { display: none; gap: 8px; align-items: center; margin-top: 6px; font-size: 12px; }
+  .confirm[data-open="true"] { display: flex; }
+  .empty { padding: 36px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 4px; }
+  .screen { display: none; }
+  .screen[data-active="true"] { display: block; }
+  .overflow { overflow-x: auto; }
+  .num { font-variant-numeric: tabular-nums; }
+</style>
+
+<!-- ================= TOUR ================= -->
+<div class="tour-hl" id="tour-hl" hidden></div>
+<div class="tour-card" id="tour-card" role="dialog" aria-live="polite" hidden>
+  <div class="tour-step" id="tour-step"></div>
+  <div class="tour-text" id="tour-text"></div>
+  <div class="tour-btns"><button type="button" class="btn sm" id="tour-skip">Skip tour</button><span style="flex:1"></span><button type="button" class="btn sm" id="tour-back">Back</button><button type="button" class="btn sm primary" id="tour-next">Next</button></div>
+</div>
+<div class="helppop" id="helppop" hidden role="dialog" aria-label="Prototype guide">
+  <div class="hp-hd"><strong>How this prototype flows</strong><button type="button" class="x" aria-label="Close" id="helppop-x">×</button></div>
+  <ol class="flow" id="flow">
+    <li data-go="work"><span class="n">1</span><div><button type="button" class="lnk" data-go="work">Your work</button><div class="d">A dashboard and a notebook, as they look in Free Edition. <em>Share</em> shows what exists today.</div></div></li>
+    <li data-go="publish"><span class="n">2</span><div><button type="button" class="lnk" data-go="publish">Publish a snapshot</button><div class="d">Inside the Publish button. Choose what’s included; Genie checks for personal data and secrets.</div></div></li>
+    <li data-go="viewer"><span class="n">3</span><div><button type="button" class="lnk" data-go="viewer">Signed-out viewer</button><div class="d">What a recruiter or professor sees at the link: page, queries, results, source tables. Nothing re-runs.</div></div></li>
+    <li data-go="manage"><span class="n">4</span><div><button type="button" class="lnk" data-go="manage">Published</button><div class="d">Every snapshot: what’s in it, who opened it, update or revoke.</div></div></li>
+  </ol>
+  <div class="hp-ft"><button type="button" class="btn sm" id="replay-tour">Replay guided tour</button><span class="draft">Prototype · not a Databricks product · example data</span></div>
+</div>
+<button type="button" class="help" id="help-btn" aria-label="Open prototype guide" aria-expanded="false">?</button>
+
+
+<div class="shell">
+  <div class="top">
+    <div class="left">
+      <button type="button" class="iconbtn" aria-label="Toggle sidebar"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M6 2.5v11"/></svg></button>
+      <div class="logo"><img src="data:image/png;base64,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" alt="Databricks Free Edition" style="height:30px;width:auto;display:block"><span class="proto-tag" title="This is a prototype, not a Databricks product">Prototype</span></div>
+    </div>
+    <div class="search" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><span>Search data, notebooks, recents, and more…</span><span>⌘ + P</span></div>
+    <div class="right">
+      <span class="verify">Verify identity</span>
+      <span class="ws">workspace ▾</span>
+      <button type="button" class="iconbtn genie" aria-label="Genie Code"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.6 3.9L13.5 6.5l-3.9 1.6L8 12l-1.6-3.9L2.5 6.5l3.9-1.6z"/></svg></button>
+      <button type="button" class="iconbtn" aria-label="Apps"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="3" cy="3" r="1.5"/><circle cx="8" cy="3" r="1.5"/><circle cx="13" cy="3" r="1.5"/><circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="13" cy="8" r="1.5"/><circle cx="3" cy="13" r="1.5"/><circle cx="8" cy="13" r="1.5"/><circle cx="13" cy="13" r="1.5"/></svg></button>
+      <span class="avatar" aria-label="Signed in as L">L</span>
+    </div>
+  </div>
+
+  <div class="body">
+    <aside class="side" aria-label="Sidebar">
+      <button type="button" class="newbtn"><span class="plus">+</span> New</button>
+      <nav class="nav">
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7.5L8 2l6 5.5V14H2z"/></svg>Home</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 5L8 2l6.5 3L8 8z"/><path d="M4 6.5V11l4 2 4-2V6.5"/></svg>Learn</a>
+        <a href="#" id="nav-ws" data-go="work" aria-current="page"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M6 2v12M2 6h12"/></svg>Workspace</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l2.5 1.5"/></svg>Recents</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="6" height="4" rx="1"/><rect x="2" y="10" width="5" height="4" rx="1"/><rect x="9" y="10" width="5" height="4" rx="1"/><path d="M8 6v2M4.5 10V8h7v2"/></svg>Catalog</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h5l2 2h5v7H2z"/></svg>Jobs &amp; Pipelines</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 12a3 3 0 010-6 4 4 0 017.7 1H12a2.5 2.5 0 010 5z"/></svg>Compute</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M10.5 5.5L9 9l-3.5 1.5L7 7z"/></svg>Discover</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 6l1-3h10l1 3M2 6v8h12V6M6 14v-4h4v4"/></svg>Marketplace</a>
+        <a href="#" id="nav-pub" data-go="manage"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 9.5l3-3M5 11a2.5 2.5 0 01-3.5-3.5L4 5M11 5a2.5 2.5 0 013.5 3.5L12 11"/></svg>Published <span class="badge-new">new</span></a>
+        <div class="grp">SQL</div>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M5 6h6M5 8.5h4M5 11h5"/></svg>SQL Editor</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h6l3 3v9H4z"/><path d="M6 8h5M6 11h5"/></svg>Queries</a>
+        <a href="#" id="nav-dash" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M2 7h12M7 7v7"/></svg>Dashboards</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h10v8H7l-3 3z"/></svg>Genie Agents</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 11V7a4 4 0 018 0v4l1 1H3z"/><path d="M6.5 14h3"/></svg>Alerts</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 5v3h3"/></svg>Query History</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="8" cy="4" rx="5" ry="2"/><path d="M3 4v8c0 1.1 2.2 2 5 2s5-.9 5-2V4"/></svg>SQL Warehouses</a>
+        <div class="grp">Data Engineering</div>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 4h10M3 8h10M3 12h10"/></svg>Runs</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v8M5 7l3 3 3-3M3 13h10"/></svg>Data Ingestion</a>
+        <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="5" height="5"/><rect x="9" y="9" width="5" height="5"/><path d="M7 4.5h2v4.5"/></svg>Visual Data Prep</a>
+        <div class="grp">AI/ML ›</div>
+      </nav>
+    </aside>
+
+    <div class="content">
+      <div class="filetabs" role="tablist" aria-label="Open files">
+        <button type="button" class="filetab" role="tab" aria-selected="true" data-asset="dashboard"><span class="ico dash" aria-hidden="true"></span>Bay Wheels Rides <span class="draft">(Draft)</span><span class="x" aria-hidden="true">×</span></button>
+        <button type="button" class="filetab" role="tab" aria-selected="false" data-asset="notebook"><span class="ico nb" aria-hidden="true"></span>baywheels_analysis<span class="x" aria-hidden="true">×</span></button>
+        <button type="button" class="plus" aria-label="New tab">+</button>
+      </div>
+
+      <div class="pane">
+        <!-- ================= WORK ================= -->
+        <section class="screen" id="screen-work" data-active="true">
+          <div class="titlerow">
+            <h1 id="work-title">Bay Wheels Rides</h1>
+            <span class="star" aria-hidden="true">☆</span>
+            <span class="spacer"></span>
+            <span class="draft" id="work-state">Draft</span>
+            <button type="button" class="btn" id="btn-share">Share</button>
+            <button type="button" class="btn primary" id="btn-publish">Publish</button>
+          </div>
+          <div id="work-body"></div>
+        </section>
+
+        <!-- ================= VIEWER ================= -->
+        <section class="screen" id="screen-viewer">
+          <div class="previewbar" role="status">
+            <span class="eye" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.6"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg></span>
+            <div class="t"><strong>Previewing as a visitor</strong> <span>— this is what someone without a Databricks account sees at your link. Your workspace isn’t visible to them.</span></div>
+            <div class="acts"><button type="button" class="btn sm" data-go="manage">Published</button><button type="button" class="btn sm primary" data-go="work">Back to my workspace</button></div>
+          </div>
+          <div class="browser">
+            <div class="chrome">
+              <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+              <div class="url" id="viewer-url">share.databricks.example/…</div>
+              <span class="who" id="viewer-who">Not signed in</span>
+            </div>
+            <div id="viewer-body"></div>
+          </div>
+        </section>
+
+        <!-- ================= MANAGE ================= -->
+        <section class="screen" id="screen-manage">
+          <div class="titlerow"><h1>Published</h1><span class="spacer"></span><button type="button" class="btn" data-go="work">Back to my work</button></div>
+          <div class="draft" style="margin-bottom:10px">Snapshots you’ve published from this workspace. Viewers never see anything you didn’t include here.</div>
+          <div id="manage-body"></div>
+        </section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= SHARE (today) ================= -->
+<div class="scrim" id="share-scrim">
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="share-h" style="max-width:600px">
+    <div class="hd"><h2 id="share-h">Sharing: <span data-asset-name>Bay Wheels Rides</span></h2><button type="button" class="x" aria-label="Close" data-close="share-scrim">×</button></div>
+    <div class="bd">
+      <div class="today">This is the sharing dialog that exists today. Every option requires a Databricks identity in <em>this</em> account — which, in Free Edition, is you.</div>
+      <div class="field"><label for="share-people">Add users or groups</label><input class="in" type="text" id="share-people" placeholder="Search by name, group, or email"></div>
+      <div class="people"><div><span>Name</span><span>Permission</span></div><div><span>L (you)</span><span>Can manage</span></div></div>
+      <div class="field"><span class="lbl">Sharing settings</span><label class="rowf"><input type="checkbox"> Anyone in my account can view</label></div>
+      <div class="linkbox" id="share-link"></div>
+    </div>
+    <div class="ft"><span class="hint">No option for people outside the account.</span><button type="button" class="btn" data-close="share-scrim">Done</button><button type="button" class="btn primary" id="share-to-publish">Publish a snapshot instead</button></div>
+  </div>
+</div>
+
+<!-- ================= PUBLISH ================= -->
+<div class="scrim" id="publish-scrim">
+  <form class="dlg" role="dialog" aria-modal="true" aria-labelledby="pub-h" id="publish-form" novalidate>
+    <div class="hd"><h2 id="pub-h">Publish a snapshot of <span data-asset-name>Bay Wheels Rides</span></h2><span class="badge-new" style="margin-left:8px">new</span><button type="button" class="x" aria-label="Close" data-close="publish-scrim">×</button></div>
+    <div class="bd">
+      <div id="snap-opts">
+        <p style="margin:0 0 4px;color:var(--ink-2)">A read-only copy — visualizations, queries and data — at a link that works without a Databricks account. Nothing re-runs; nothing outside the snapshot is reachable.</p>
+        <div class="section">
+          <h3>What’s included</h3>
+          <div class="incl" id="incl"></div>
+          <div class="scan" id="scan"></div>
+        </div>
+
+        <div class="section">
+          <div class="field"><label for="pub-title">Title</label><input class="in" type="text" id="pub-title"></div>
+          <div class="field"><label for="pub-desc">Description <span class="draft">(optional)</span></label><input class="in" type="text" id="pub-desc" placeholder="e.g. CIS 5450 final project · DataSF + Bay Wheels · Spark SQL + AI/BI dashboard"></div>
+        </div>
+
+        <div class="section" id="aud-section">
+          <h3 id="aud-h">Who can open it</h3>
+          <label class="rowf" style="margin-bottom:6px"><input type="radio" name="aud" value="link" checked> Anyone with the link</label>
+          <label class="rowf" style="margin-bottom:6px"><input type="radio" name="aud" value="people"> Specific people — they get a link that opens for their email, no account needed</label>
+          <div class="chips" id="chips" aria-label="Recipient emails" hidden>
+            <span class="chip">prof.smith@upenn.edu <button type="button" aria-label="Remove prof.smith@upenn.edu">×</button></span>
+            <input type="text" id="chip-input" placeholder="Add an email and press Enter" aria-label="Add recipient email">
+          </div>
+        </div>
+
+        <div class="section rowf">
+          <label for="expiry"><strong>Link expires</strong></label>
+          <select class="in" id="expiry"><option>1 week</option><option>1 month</option><option selected>6 months</option><option>1 year</option></select>
+          <label><input type="checkbox" id="show-name" checked> Show my name as author</label>
+          <label id="code-opt"><input type="checkbox" id="show-code" checked> Show code by default</label>
+        </div>
+      </div>
+    </div>
+    <div class="ft"><span class="hint" id="pub-hint"></span><button type="button" class="btn" data-close="publish-scrim">Cancel</button><button type="submit" class="btn primary" id="do-publish">Publish</button></div>
+  </form>
+</div>
+
+<!-- ================= DONE ================= -->
+<div class="scrim" id="done-scrim">
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="done-h" style="max-width:520px">
+    <div class="hd"><h2 id="done-h">Snapshot published</h2><button type="button" class="x" aria-label="Close" data-close="done-scrim">×</button></div>
+    <div class="bd">
+      <div class="ok-box" id="done-sub"></div>
+      <div class="field"><span class="lbl">Link</span><div class="linkbox" id="done-link"></div><div class="help">Editing your draft won’t change the snapshot until you choose “Update snapshot” in Published.</div></div>
+    </div>
+    <div class="ft"><button type="button" class="btn" id="copy-link">Copy link</button><button type="button" class="btn" data-go="manage" data-close="done-scrim">Published</button><button type="button" class="btn primary" data-go="viewer" data-close="done-scrim">Open as a viewer</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  // ---------- example data ----------
+  const hours = [9,6,4,3,3,8,26,71,118,86,58,64,72,70,68,84,112,136,104,66,44,32,22,14]; // hundreds of rides, June
+  const boroughs = [["Financial District",21400],["SoMa",18900],["Mission",12600],["Hayes Valley",6100],["Marina",3800]];
+  const DATASETS = [
+    { id: "hourly_rides", name: "hourly_rides", rows: 24, sql:
+`SELECT hour(started_at)                         AS hr,
+       count(*)                                 AS rides,
+       round(avg(unix_timestamp(ended_at)
+               - unix_timestamp(started_at)) / 60, 1) AS avg_min
+FROM workspace.default.baywheels_trips   -- CSV from Lyft system data
+WHERE month(started_at) = 6
+GROUP BY 1
+ORDER BY 1`,
+      cols: ["hr", "rides", "avg_min"], data: [[0,"912","14.2"],[1,"604","15.8"],[2,"388","16.1"],[3,"271","13.9"],[4,"305","12.6"]] },
+    { id: "neighborhood_rides", name: "neighborhood_rides", rows: 5, sql:
+`SELECT s.neighborhood,
+       count(*)      AS rides,
+       count(DISTINCT r.rider_email) AS riders
+FROM workspace.default.baywheels_trips t
+JOIN workspace.default.stations s ON t.start_station_id = s.station_id
+LEFT JOIN workspace.default.rider_survey r ON t.ride_id = r.ride_id
+GROUP BY 1
+ORDER BY 2 DESC`,
+      cols: ["neighborhood", "rides", "riders"], data: boroughs.map(b => [b[0], b[1].toLocaleString(), Math.round(b[1] * .31).toLocaleString()]), pii: "riders (from rider_email)" },
+  ];
+  const ASSETS = {
+    dashboard: { kind: "dashboard", name: "Bay Wheels Rides", link: "https://free-edition.databricks.example/dashboardsv3/01f0…/published",
+      flag: { text: "Personal data: the <code>riders</code> column is computed from <code>rider_survey.rider_email</code>", fix: "Drop column", done: "<code>riders</code> column dropped from the snapshot", note: "1 column removed by the author" },
+      facts: ["4 visualizations, 1 global filter, 2 datasets (29 result rows) from 3 uploaded CSVs"] },
+    notebook: { kind: "notebook", name: "baywheels_analysis", link: "https://free-edition.databricks.example/editor/notebooks/2934…",
+      flag: { text: "Secret: cell 5 prints what looks like an API token (<code>app_token 4f8a…</code>)", fix: "Hide output", done: "Cell 5 output hidden from the snapshot", note: "1 cell output hidden by the author" },
+      facts: ["6 cells (2 SQL, 3 Python, 1 text), 4 outputs, 1 chart", "3 tables referenced: baywheels_trips, stations, rider_survey (all uploaded CSVs)"] },
+  };
+  const state = { asset: "dashboard", subtab: "page", ds: 0, snapshots: [], hidden: false, acknowledged: false, current: null };
+
+
+  const TABLES = [
+    { name: "baywheels_trips", rows: "214,860", size: "38.2 MB", source: "Uploaded CSV · 202506-baywheels-tripdata.csv (Lyft system data)", desc: "One row per Bay Wheels ride in San Francisco, June 2025.",
+      cols: [["ride_id","string","Lyft ride identifier"],["rideable_type","string","classic_bike / electric_bike"],["started_at","timestamp",""],["ended_at","timestamp",""],["start_station_id","string","Joins to stations.station_id"],["end_station_id","string",""],["member_casual","string","member / casual"],["start_lat","double",""],["start_lng","double",""]],
+      sample: [["5F2A…","electric_bike","2025-06-03 08:12:41","2025-06-03 08:25:09","SF-G30","SF-A21","member","37.7897","-122.4010"],["9C11…","classic_bike","2025-06-03 08:14:02","2025-06-03 08:31:55","SF-F27","SF-K22","casual","37.7756","-122.4193"],["1B7E…","electric_bike","2025-06-03 08:15:37","2025-06-03 08:22:10","SF-G30","SF-E18","member","37.7897","-122.4010"],["77D0…","classic_bike","2025-06-03 08:16:50","2025-06-03 08:40:12","SF-J11","SF-C09","member","37.7599","-122.4148"],["A3C4…","electric_bike","2025-06-03 08:17:03","2025-06-03 08:29:44","SF-B04","SF-G30","casual","37.8060","-122.4230"]] },
+    { name: "stations", rows: "512", size: "61 KB", source: "Uploaded CSV · DataSF “Bay Wheels stations” export", desc: "Station locations with the SF Planning neighborhood each falls in.",
+      cols: [["station_id","string",""],["name","string",""],["neighborhood","string","SF Planning analysis neighborhood"],["lat","double",""],["lng","double",""],["capacity","int","Docks"]],
+      sample: [["SF-G30","Market St at 4th St","Financial District","37.7897","-122.4010","35"],["SF-F27","Howard St at 2nd St","SoMa","37.7756","-122.4193","27"],["SF-J11","Valencia St at 16th St","Mission","37.7599","-122.4148","23"],["SF-A21","Steuart St at Market St","Financial District","37.7941","-122.3948","31"],["SF-B04","Marina Blvd at Buchanan","Marina","37.8060","-122.4230","19"]] },
+    { name: "rider_survey", rows: "1,204", size: "84 KB", source: "Uploaded CSV · Google Form responses from a class survey", desc: "Optional survey answers linked to rides by ride_id.", pii: "rider_email",
+      cols: [["ride_id","string",""],["rider_email","string","Personal data"],["age_band","string","18–24, 25–34, …"],["purpose","string","commute / errand / leisure"]],
+      sample: [["5F2A…","a•••@upenn.edu","18–24","commute"],["77D0…","m•••@gmail.com","25–34","commute"],["9C11…","j•••@sfsu.edu","18–24","leisure"],["1B7E…","r•••@gmail.com","35–44","errand"],["A3C4…","k•••@berkeley.edu","18–24","leisure"]] },
+  ];
+  function catalogPanel(o) {
+    o = Object.assign({ viewer: false, dataMode: "full", dropPii: false, tables: null }, o || {});
+    const idx = TABLES.map((_, i) => i).filter(i => !o.tables || o.tables[i]);
+    if (!idx.includes(state.tbl || 0)) state.tbl = idx[0] || 0;
+    const t = TABLES[state.tbl || 0]; const tab = state.cattab || "overview";
+    const piiCol = c => o.dropPii && t.pii === c[0];
+    const hideSample = o.viewer && (o.dataMode === "schema" || o.dataMode === "hide");
+    const rows = o.viewer && o.dataMode === "preview" ? t.sample.slice(0, 3) : t.sample;
+    const body = tab === "overview" ? `<div class="desc">${t.desc}</div><table class="res"><thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead><tbody>${t.cols.map(c => `<tr><td>${c[0]}</td><td>${c[1]}</td><td>${piiCol(c) ? '<span class="removed">Removed from the snapshot by the author</span>' : c[2]}</td></tr>`).join("")}</tbody></table>`
+      : tab === "sample" ? (hideSample ? `<div class="rows">The author chose to include the schema only.</div>` : `<div class="overflow"><table class="res"><thead><tr>${t.cols.map(c => `<th>${c[0]}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((v, i) => `<td>${piiCol(t.cols[i]) ? '<span class="removed">—</span>' : v}</td>`).join("")}</tr>`).join("")}</tbody></table></div><div class="rows">Showing ${rows.length} of ${t.rows} rows${o.viewer ? " · frozen at publish time" : ""}</div>`)
+      : `<dl class="kv"><dt>Type</dt><dd>Managed table · Delta</dd><dt>Location</dt><dd>workspace.default.${t.name}</dd><dt>Rows</dt><dd>${t.rows}</dd><dt>Size</dt><dd>${t.size}</dd><dt>Created by</dt><dd>${o.viewer ? "Grace L." : "L (you)"}</dd><dt>Source</dt><dd>${t.source}</dd><dt>Last updated</dt><dd>Sep 2, 2026</dd></dl>`;
+    return `<div class="cat"><div class="tree"><div class="h">Catalog</div><div class="node">▾ <strong>workspace</strong></div><div class="node" style="padding-left:18px">▾ default</div>
+        ${idx.map(i => `<button type="button" aria-selected="${i === (state.tbl || 0)}" data-tbl="${i}"><span style="color:var(--muted)">▤</span>${TABLES[i].name}</button>`).join("")}</div>
+      <div class="main"><div class="crumb">workspace › default › ${t.name}</div><div class="th"><strong>${t.name}</strong><span class="tag">Table</span><span class="tag">Delta</span>${o.viewer ? `<span class="tag">in snapshot</span>` : ""}</div>
+        <div class="subtabs" role="tablist" style="margin-bottom:8px">${[["overview","Overview"],["sample","Sample Data"],["details","Details"]].map(x => `<button type="button" role="tab" aria-selected="${tab === x[0]}" data-cattab="${x[0]}">${x[1]}</button>`).join("")}</div>${body}</div></div>`;
+  }
+  function wireCatalog(root, rerender) {
+    root.querySelectorAll("[data-tbl]").forEach(b => b.addEventListener("click", () => { state.tbl = +b.dataset.tbl; rerender(); }));
+    root.querySelectorAll("[data-cattab]").forEach(b => b.addEventListener("click", () => { state.cattab = b.dataset.cattab; rerender(); }));
+  }
+
+  function stripPii(sql) { return sql.replace(/,\n\s+count\(DISTINCT r\.rider_email\) AS riders/, "").replace(/\nLEFT JOIN workspace\.default\.rider_survey r ON t\.ride_id = r\.ride_id/, ""); }
+
+  // ---------- charts ----------
+  function lineChart() {
+    const w = 640, h = 210, pl = 36, pr = 30, pt = 12, pb = 26;
+    const max = 150, stepX = (w - pl - pr) / 23;
+    const y = v => pt + (h - pt - pb) * (1 - v / max);
+    const pts = hours.map((v, i) => [pl + i * stepX, y(v)]);
+    const path = pts.map((p, i) => (i ? "L" : "M") + p[0].toFixed(1) + " " + p[1].toFixed(1)).join(" ");
+    const area = path + ` L${pts[23][0].toFixed(1)} ${(h - pb)} L${pl} ${(h - pb)} Z`;
+    let grid = "";
+    for (const v of [0, 50, 100, 150]) grid += `<line x1="${pl}" x2="${w - pr}" y1="${y(v)}" y2="${y(v)}" stroke="#e8ecef"/><text x="${pl - 6}" y="${y(v) + 4}" text-anchor="end">${v}</text>`;
+    let xl = "";
+    for (const i of [0, 6, 12, 18, 23]) xl += `<text x="${pl + i * stepX}" y="${h - 7}" text-anchor="middle">${String(i).padStart(2, "0")}:00</text>`;
+    return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Rides by hour of day, peaking at 17:00 with about 13,600 rides">${grid}${xl}
+      <path d="${area}" fill="var(--chart)" fill-opacity=".10"/><path d="${path}" fill="none" stroke="var(--chart)" stroke-width="2.2" stroke-linejoin="round"/>
+      <circle cx="${pts[17][0]}" cy="${pts[17][1]}" r="3.5" fill="var(--chart)"/><text x="${pts[17][0]}" y="${pts[17][1] - 9}" text-anchor="middle" style="fill:var(--ink);font-weight:600">13.6k</text></svg>`;
+  }
+  function barChart() {
+    const w = 440, h = 210, pl = 118, pr = 56, rowH = 34, top = 12, max = 24000, bw = w - pl - pr;
+    let bars = "";
+    boroughs.forEach(([n, v], i) => { const y = top + i * rowH, len = bw * v / max;
+      bars += `<text x="${pl - 8}" y="${y + 19}" text-anchor="end" style="fill:var(--ink)">${n}</text><rect x="${pl}" y="${y + 6}" width="${len.toFixed(1)}" height="20" fill="var(--chart)"/><text x="${pl + len + 6}" y="${y + 20}">${(v / 1000).toFixed(1)}k</text>`; });
+    return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="Rides by start neighborhood: Financial District 21.4k, SoMa 18.9k, Mission 12.6k, Hayes Valley 6.1k, Marina 3.8k">${bars}</svg>`;
+  }
+
+  // ---------- renderers ----------
+  function dashboardPage(editor) {
+    return `<div class="canvas">
+      <div class="grid4">
+        <div class="widget"><div class="lbl">Rides / day</div><div class="val">7,900</div></div>
+        <div class="widget"><div class="lbl">Average ride</div><div class="val">12.4 min</div></div>
+        <div class="widget"><div class="lbl">Peak hour</div><div class="val">17:00</div></div>
+        <div class="widget"><div class="lbl">Top start neighborhood</div><div class="val">Financial District</div></div>
+      </div>
+      <div class="grid32">
+        <div class="widget"><h3>Rides by hour of day (June)</h3>${lineChart()}</div>
+        <div class="widget"><h3>Rides by start neighborhood</h3>${barChart()}</div>
+      </div>
+      ${editor ? `<div class="floatbar" aria-hidden="true"><span class="g">✦</span><i></i><span class="on">↖</span><span>📈</span><span>T</span><span>⏷</span><span>▣</span><i></i><span>↶</span><span>↷</span></div>` : ""}
+    </div>`;
+  }
+  function dataTab(opts) {
+    const o = Object.assign({ viewer: false, dropPii: false, dataMode: "full" }, opts || {});
+    const ds = DATASETS[state.ds];
+    const cols = ds.cols.filter(c => !(o.dropPii && ds.pii && c === "riders"));
+    const rowsHtml = ds.data.slice(0, o.dataMode === "preview" ? 3 : 5).map(r => `<tr>${r.filter((_, i) => cols.includes(ds.cols[i])).map(v => `<td>${v}</td>`).join("")}</tr>`).join("");
+    const sql = o.dropPii && ds.pii ? stripPii(ds.sql) : ds.sql;
+    return `<div class="datatab">
+      <div class="dslist" role="tablist" aria-label="Datasets"><div class="h">Datasets</div>
+        ${DATASETS.map((d, i) => `<button type="button" role="tab" aria-selected="${i === state.ds}" data-ds="${i}"><span style="color:var(--muted)">▤</span>${d.name}</button>`).join("")}
+        ${o.viewer ? "" : `<button type="button" style="color:var(--blue)">+ Create from SQL</button>`}
+      </div>
+      <div class="dsbody">
+        <div class="h2"><strong>${ds.name}</strong><span class="draft">${o.viewer ? (o.dataMode === "schema" ? "schema only" : o.dataMode === "preview" ? "preview · first 100 rows" : "full results") + " · frozen at publish time" : "SQL warehouse: Serverless Starter"}</span>${o.viewer ? "" : `<span class="spacer" style="flex:1"></span><button type="button" class="btn sm">Run</button>`}${o.viewer && o.csv && o.dataMode !== "schema" ? `<span style="flex:1"></span><button type="button" class="btn sm">Download CSV</button>` : ""}</div>
+        ${o.sql ? `<pre class="sql">${esc(sql)}</pre>` : `<div class="rows" style="margin-bottom:8px">The author didn’t include the query text.</div>`}
+        ${o.dataMode === "hide" && o.viewer ? `<div class="rows">The author didn’t include query results.</div>` : o.dataMode === "schema" && o.viewer
+          ? `<table class="res"><thead><tr><th>column</th><th>type</th></tr></thead><tbody>${cols.map(c => `<tr><td>${c}</td><td>${c === "neighborhood" ? "string" : c === "avg_min" ? "double" : "bigint"}</td></tr>`).join("")}</tbody></table><div class="rows">Author chose to include the schema only.</div>`
+          : `<table class="res"><thead><tr>${cols.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>${rowsHtml}</tbody></table><div class="rows">Showing ${o.dataMode === "preview" ? 3 : 5} of ${ds.rows} rows</div>`}
+      </div></div>`;
+  }
+  function notebook(opts) {
+    const o = Object.assign({ hideSecret: false, viewer: false }, opts || {});
+    const cell = (n, lang, code, out) => `<div class="cell"><div class="hd"><span>Cmd ${n}</span><span class="lang">${lang}</span></div>${code ? `<pre>${esc(code)}</pre>` : ""}${out ? `<div class="out${out.hid ? " hid" : ""}">${out.html}</div>` : ""}</div>`;
+    const md = `<div class="cell"><div class="md"><h3>Bay Wheels demand by hour and neighborhood</h3><p>CIS 5450 final project. When and where do people ride bike share in San Francisco? Data: Lyft’s public Bay Wheels trip CSV for June 2025, uploaded to <code>workspace.default.baywheels_trips</code>, joined to a stations table from DataSF.</p></div></div>`;
+    const c2 = cell(2, "sql", DATASETS[0].sql, { html: `<table class="res"><thead><tr>${DATASETS[0].cols.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>${DATASETS[0].data.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table><div class="rows">Showing 5 of 24 rows</div>` });
+    const c3 = cell(3, "python", `import matplotlib.pyplot as plt\ndf = _sqldf.toPandas()\nplt.plot(df.hr, df.rides / 100)\nplt.title("Rides by hour (hundreds)")`, { html: lineChart() });
+    const c4 = cell(4, "sql", stripPii(DATASETS[1].sql), { html: `<table class="res"><thead><tr><th>neighborhood</th><th>rides</th></tr></thead><tbody>${boroughs.map(b => `<tr><td>${b[0]}</td><td>${b[1].toLocaleString()}</td></tr>`).join("")}</tbody></table>` });
+    const secret = o.hideSecret ? { hid: true, html: "Output hidden by the author before publishing." }
+      : { html: `${o.viewer ? "" : '<div class="flag">Publish will flag this output</div>'}<code>{'domain': 'data.sfgov.org', 'app_token': '4f8a92c1e7b3d5f6a0c2', 'dataset': 'wwmu-gmzc'}</code>` };
+    const c5 = cell(5, "python", `cfg = load_config("datasf")   # Socrata credentials for DataSF\nprint(cfg)   # oops — prints the app token`, secret);
+    const c6 = cell(6, "python", `df.to_csv("/Volumes/workspace/default/out/hourly_rides.csv")`, { html: `<code>Wrote 24 rows</code>` });
+    return `<div class="cells">${md}${c2}${c3}${c4}${c5}${c6}</div>`;
+  }
+  function renderWork() {
+    const a = ASSETS[state.asset];
+    document.getElementById("work-title").textContent = a.name;
+    document.querySelectorAll("[data-asset-name]").forEach(el => el.textContent = a.name);
+    document.querySelectorAll('.filetab[role="tab"]').forEach(t => t.setAttribute("aria-selected", String(t.dataset.asset === state.asset)));
+    document.getElementById("share-link").innerHTML = `${a.link} <span style="color:var(--faint)">— opens a sign-in page for anyone else</span>`;
+    const n = state.snapshots.filter(s => s.kind === a.kind && !s.revoked).length;
+    document.getElementById("work-state").textContent = (a.kind === "dashboard" ? "Draft" : "Serverless · last run 2 min ago") + (n ? ` · ${n} live snapshot${n > 1 ? "s" : ""}` : "");
+    const body = document.getElementById("work-body");
+    if (a.kind === "dashboard") {
+      body.innerHTML = `<div class="subtabs" role="tablist"><button type="button" role="tab" aria-selected="${state.subtab === "data"}" data-sub="data">▤ Data</button><span class="sep"></span><button type="button" role="tab" aria-selected="${state.subtab === "page"}" data-sub="page">Page 1 <span style="color:var(--faint)">⋮</span></button><button type="button" class="plus" aria-label="Add page">+</button><span style="flex:1"></span><button type="button" role="tab" aria-selected="${state.subtab === "tables"}" data-sub="tables" title="Opens the source tables in Catalog">Source tables (3)</button></div>
+        ${state.subtab === "page" ? `<div class="gfilters">⏷ Global filters</div>${dashboardPage(true)}` : state.subtab === "data" ? dataTab() : catalogPanel()}`;
+    } else {
+      body.innerHTML = `<div class="nbbar"><button type="button" class="btn sm">▶ Run all</button><span class="pill"><span class="dot"></span>Serverless</span><span class="pill">Python ▾</span><span class="draft">All changes saved</span><span style="flex:1"></span><button type="button" class="btn sm" id="au-tables" aria-pressed="${!!state.nbTables}">▤ Source tables (3)</button></div>${state.nbTables ? `<div style="margin-bottom:10px">${catalogPanel()}</div>` : ""}${notebook()}`;
+      const at = body.querySelector("#au-tables"); if (at) at.addEventListener("click", () => { state.nbTables = !state.nbTables; renderWork(); });
+    }
+    body.querySelectorAll("[data-sub]").forEach(b => b.addEventListener("click", () => { state.subtab = b.dataset.sub; renderWork(); }));
+    body.querySelectorAll("[data-ds]").forEach(b => b.addEventListener("click", () => { state.ds = +b.dataset.ds; renderWork(); }));
+    wireCatalog(body, renderWork);
+  }
+  document.querySelectorAll('.filetab[role="tab"]').forEach(t => t.addEventListener("click", () => { state.asset = t.dataset.asset; state.subtab = "page"; renderWork(); if (typeof show === "function") show("work"); }));
+  renderWork();
+
+  // ---------- navigation ----------
+  const screens = ["work", "viewer", "manage"];
+  function go(name) { if (name === "publish") { show("work"); openPublish(true); return; } show(name); }
+  function show(name) {
+    screens.forEach(s => document.getElementById("screen-" + s).dataset.active = String(s === name));
+    document.body.classList.toggle("viewer-mode", name === "viewer");
+    setStep(name);
+    document.getElementById("nav-ws").toggleAttribute("aria-current", name === "work");
+    if (name === "work") document.getElementById("nav-ws").setAttribute("aria-current", "page");
+    document.getElementById("nav-pub").removeAttribute("aria-current");
+    if (name === "manage") { document.getElementById("nav-pub").setAttribute("aria-current", "page"); renderManage(); }
+    if (name === "viewer") renderViewer();
+    window.scrollTo({ top: 0 });
+  }
+  function setStep(name) { document.querySelectorAll("#flow li").forEach(li => { if (li.dataset.go === name) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current"); }); }
+  function toggleHelp(force) { const pop = document.getElementById("helppop"), btn = document.getElementById("help-btn"); const open = force !== undefined ? force : pop.hidden; pop.hidden = !open; btn.setAttribute("aria-expanded", String(open)); }
+  document.querySelectorAll("[data-go]").forEach(el => el.addEventListener("click", e => { e.preventDefault(); if (el.dataset.close) closeDialog(el.dataset.close); go(el.dataset.go); }));
+
+  // ---------- dialogs ----------
+  let lastFocus = null;
+  function openDialog(id) { lastFocus = document.activeElement; const s = document.getElementById(id); s.dataset.open = "true"; const f = s.querySelector("input:not([hidden]), button.x"); if (f) f.focus(); }
+  function closeDialog(id) { document.getElementById(id).dataset.open = "false"; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+  document.querySelectorAll("[data-close]").forEach(b => b.addEventListener("click", () => closeDialog(b.dataset.close)));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll('.scrim[data-open="true"]').forEach(s => closeDialog(s.id)); });
+  document.querySelectorAll(".scrim").forEach(s => s.addEventListener("click", e => { if (e.target === s) closeDialog(s.id); }));
+  document.getElementById("btn-share").addEventListener("click", () => openDialog("share-scrim"));
+  document.getElementById("btn-publish").addEventListener("click", () => openPublish(false));
+  document.getElementById("share-to-publish").addEventListener("click", () => { closeDialog("share-scrim"); openPublish(true); });
+
+  // ---------- publish dialog ----------
+  function setMode() { document.getElementById("pub-hint").textContent = "You can update or revoke the snapshot any time from Published."; document.getElementById("pub-hint").style.color = ""; }
+  function openPublish(snapshot) {
+    const a = ASSETS[state.asset];
+    state.hidden = false; state.acknowledged = false;
+    setMode();
+    document.getElementById("pub-title").value = a.kind === "dashboard" ? "Bay Wheels rides — demand by hour and neighborhood" : "Bay Wheels demand by hour and neighborhood";
+    document.getElementById("code-opt").hidden = a.kind !== "notebook";
+    // what's included — generated from what the asset actually contains
+    const incl = document.getElementById("incl");
+    const tblRows = TABLES.map((t, i) => `<div class="ir sub"><label><input type="checkbox" class="inc-tbl" data-i="${i}" checked> <code>${t.name}</code></label><span class="cnt">${t.rows} rows · ${t.size}${t.pii ? " · contains personal data" : ""}</span></div>`).join("");
+    const dataSel = (id, opts) => `<select class="in" id="${id}">${opts.map(o => `<option value="${o[0]}"${o[2] ? " selected" : ""}>${o[1]}</option>`).join("")}</select>`;
+    incl.innerHTML = a.kind === "dashboard" ? `
+      <div class="ir"><label><input type="checkbox" id="inc-page" checked> Page 1</label><span class="cnt">4 visualizations · 1 global filter</span></div>
+      <div class="ir"><label><input type="checkbox" id="inc-sql" checked> Queries</label><span class="cnt">2 datasets · hourly_rides, neighborhood_rides</span></div>
+      <div class="ir"><label><input type="checkbox" id="inc-results" checked> Query results</label><span class="cnt">29 rows</span>${dataSel("inc-data", [["full", "All rows", true], ["preview", "First 100 rows"], ["schema", "Columns only"]])}</div>
+      <div class="ir"><label><input type="checkbox" id="inc-tables" checked> Source tables</label><span class="cnt">3 tables · 38.4 MB</span><span class="r">same rows setting as results</span></div>
+      ${tblRows}
+      <div class="help">Included by default: Free Edition is for personal, non-commercial work, and a viewer can’t run the queries without the data. Untick anything that isn’t yours to share.</div>
+      <div class="ir"><label><input type="checkbox" id="inc-csv" checked> Let viewers download results and tables as CSV</label></div>`
+    : `
+      <div class="ir"><label><input type="checkbox" id="inc-page" checked> Cells and outputs</label><span class="cnt">6 cells · 4 outputs · 1 chart</span></div>
+      <div class="ir"><label><input type="checkbox" id="inc-sql" checked> Code</label><span class="cnt">SQL and Python in every cell · viewers can toggle</span></div>
+      <div class="ir"><label><input type="checkbox" id="inc-results" checked hidden> </label></div>
+      <div class="ir"><label><input type="checkbox" id="inc-tables" checked> Tables the notebook reads</label><span class="cnt">3 tables · 38.4 MB</span>${dataSel("inc-data", [["preview", "First 100 rows", true], ["full", "All rows"], ["schema", "Columns only"]])}</div>
+      ${tblRows}
+      <div class="help">Included so a viewer can open a copy and actually run it. Untick a table if the data isn’t yours to share.</div>
+      <div class="ir"><label><input type="checkbox" id="inc-csv" checked> Let viewers download the notebook (.ipynb)</label></div>`;
+    // hide the empty placeholder row in the notebook variant
+    const ph = incl.querySelector('#inc-results[hidden]'); if (ph) ph.closest(".ir").style.display = "none";
+    // parent/child table checkboxes
+    const tblBoxes = [...incl.querySelectorAll(".inc-tbl")], tblAll = incl.querySelector("#inc-tables");
+    tblAll.addEventListener("change", () => tblBoxes.forEach(b => b.checked = tblAll.checked));
+    tblBoxes.forEach(b => b.addEventListener("change", () => { tblAll.checked = tblBoxes.some(x => x.checked); tblAll.indeterminate = tblAll.checked && !tblBoxes.every(x => x.checked); }));
+    // scan
+    const scan = document.getElementById("scan");
+    scan.className = "scan";
+    const genieIcon = `<span class="gi" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.6 3.9L13.5 6.5l-3.9 1.6L8 12l-1.6-3.9L2.5 6.5l3.9-1.6z"/></svg></span>`;
+    scan.innerHTML = `<div class="h">${genieIcon}<strong>Genie checked this snapshot</strong><span class="sub">· ${a.kind === "dashboard" ? "2 datasets, 3 source tables, 4 visualizations" : "6 cells, 4 outputs, 3 source tables"} · just now</span><button type="button" class="re" id="re-check">Check again</button></div>
+      <div class="summary" id="scan-summary">One thing to look at before this goes public:</div>
+      ${a.facts.map(f => `<div class="row"><span class="ic ok" aria-label="OK">✓</span><span class="t">${f}</span></div>`).join("")}
+      <div class="row" id="flag-row"><span class="ic warn" aria-label="Warning">!</span><span class="t">${a.flag.text}</span>
+        <span class="acts"><button type="button" class="btn sm" id="hide-fix">${a.flag.fix}</button><button type="button" class="btn sm" id="keep-fix">Keep it</button></span></div>
+      <div class="row"><span class="ic ok" aria-label="OK">✓</span><span class="t">${a.kind === "dashboard" ? "No credentials or secrets in outputs" : "No personal data in table previews"}</span></div>`;
+    document.getElementById("hide-fix").addEventListener("click", () => {
+      state.hidden = true; state.acknowledged = false;
+      const row = document.getElementById("flag-row");
+      row.innerHTML = `<span class="ic ok" aria-label="OK">✓</span><span class="t">${a.flag.done}</span>`;
+      document.getElementById("scan-summary").textContent = "Nothing left to look at — this is ready to publish.";
+      toast(a.kind === "dashboard" ? "riders column dropped from the snapshot" : "Cell 5 output hidden");
+    });
+    document.getElementById("re-check").addEventListener("click", () => { toast("Genie re-checked the snapshot — no new findings"); });
+    document.getElementById("keep-fix").addEventListener("click", () => {
+      state.acknowledged = true; state.hidden = false;
+      document.getElementById("scan-summary").textContent = "You chose to keep the flagged item — it will be included.";
+      const row = document.getElementById("flag-row");
+      row.innerHTML = `<span class="ic warn" aria-label="Warning">!</span><span class="t">${a.flag.text} <span class="kept">— kept; you confirmed it’s fine to share</span></span><span class="acts"><button type="button" class="btn sm" id="hide-fix">${a.flag.fix}</button></span>`;
+      document.getElementById("hide-fix").addEventListener("click", () => { state.hidden = true; state.acknowledged = false; row.innerHTML = `<span class="ic ok" aria-label="OK">✓</span><span class="t">${a.flag.done}</span>`; document.getElementById("scan-summary").textContent = "Nothing left to look at — this is ready to publish."; toast(a.kind === "dashboard" ? "riders column dropped from the snapshot" : "Cell 5 output hidden"); });
+    });
+    // audience default
+    document.querySelector('input[name="aud"][value="link"]').checked = true;
+    document.getElementById("chips").hidden = true;
+    openDialog("publish-scrim");
+    setStep("publish");
+  }
+  document.querySelectorAll('input[name="aud"]').forEach(r => r.addEventListener("change", () => { document.getElementById("chips").hidden = document.querySelector('input[name="aud"]:checked').value !== "people"; }));
+
+  // chips
+  const chips = document.getElementById("chips"), chipInput = document.getElementById("chip-input");
+  function addChip(email) {
+    email = email.trim().replace(/,$/, "");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { toast("That doesn't look like an email address"); return; }
+    const s = document.createElement("span"); s.className = "chip"; s.innerHTML = `${esc(email)} <button type="button" aria-label="Remove ${esc(email)}">×</button>`;
+    chips.insertBefore(s, chipInput); chipInput.value = "";
+  }
+  chipInput.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === ",") { e.preventDefault(); if (chipInput.value.trim()) addChip(chipInput.value); }
+    if (e.key === "Backspace" && !chipInput.value) { const l = chipInput.previousElementSibling; if (l && l.classList.contains("chip")) l.remove(); }
+  });
+  chips.addEventListener("click", e => { if (e.target.tagName === "BUTTON") e.target.parentElement.remove(); });
+
+  // submit
+  document.getElementById("publish-form").addEventListener("submit", e => {
+    e.preventDefault();
+    const a = ASSETS[state.asset];
+    const hint = document.getElementById("pub-hint");
+    if (!state.hidden && !state.acknowledged) { hint.textContent = a.kind === "dashboard" ? "Resolve the flagged item first — drop the column, or choose Keep it." : "Resolve the flagged item first — hide the output, or choose Keep it."; hint.style.color = "var(--amber)"; const kf = document.getElementById("keep-fix"); if (kf) kf.focus(); return; }
+    const anyTbl = [...document.querySelectorAll(".inc-tbl")].some(b => b.checked);
+    if (!document.getElementById("inc-page").checked && !document.getElementById("inc-sql").checked && !anyTbl) { hint.textContent = "Include at least one thing — otherwise there’s nothing to publish."; hint.style.color = "var(--amber)"; document.getElementById("inc-page").focus(); return; }
+    const aud = document.querySelector('input[name="aud"]:checked').value;
+    const emails = [...chips.querySelectorAll(".chip")].map(c => c.firstChild.textContent.trim());
+    if (aud === "people" && !emails.length) { hint.textContent = "Add at least one email, or choose “Anyone with the link.”"; hint.style.color = "var(--amber)"; chipInput.focus(); return; }
+    const snap = { id: Math.random().toString(36).slice(2, 8), kind: a.kind,
+      title: document.getElementById("pub-title").value || "Untitled", desc: document.getElementById("pub-desc").value,
+      aud, emails, expiry: document.getElementById("expiry").value,
+      showName: document.getElementById("show-name").checked, showCode: document.getElementById("show-code").checked,
+      incPage: document.getElementById("inc-page").checked, incSql: document.getElementById("inc-sql").checked,
+      incResults: document.getElementById("inc-results").checked, dataMode: document.getElementById("inc-data").value,
+      tables: [...document.querySelectorAll(".inc-tbl")].map(b => b.checked), csv: document.getElementById("inc-csv").checked,
+      hidden: state.hidden, created: new Date(), updated: null, views: 0, revoked: false };
+    state.snapshots.unshift(snap); state.current = snap;
+    closeDialog("publish-scrim");
+    document.getElementById("done-link").textContent = linkFor(snap);
+    document.getElementById("done-sub").innerHTML = (aud === "people" ? `Sent to <strong>${esc(emails.join(", "))}</strong>. ` : `<strong>Anyone with the link</strong> can open it. `) + `Included: ${describeIncl(snap)}.`;
+    renderWork(); openDialog("done-scrim"); setStep("publish");
+  });
+  function describeIncl(s) {
+    const parts = [];
+    if (s.incPage) parts.push(s.kind === "dashboard" ? "page" : "cells and outputs");
+    if (s.incSql) parts.push(s.kind === "dashboard" ? "queries" : "code");
+    if (s.kind === "dashboard" && s.incResults) parts.push({ full: "results", preview: "results (preview)", schema: "result columns" }[s.dataMode]);
+    const n = (s.tables || []).filter(Boolean).length;
+    if (n) parts.push(`${n} table${n > 1 ? "s" : ""} (${{ full: "all rows", preview: "preview", schema: "columns only" }[s.dataMode]})`);
+    return parts.join(", ") || "nothing";
+  }
+  function linkFor(s) { return `https://share.databricks.example/${s.kind === "notebook" ? "n" : "d"}/${s.id}`; }
+  document.getElementById("copy-link").addEventListener("click", () => { const t = document.getElementById("done-link").textContent; if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => toast("Link copied"), () => toast("Copied (prototype)")); else toast("Copied (prototype)"); });
+
+  // ---------- viewer ----------
+  function renderViewer() {
+    const body = document.getElementById("viewer-body"), url = document.getElementById("viewer-url"), s = state.current;
+    if (!s) { url.textContent = "share.databricks.example/…"; body.innerHTML = `<div class="gone"><h2>No snapshot yet</h2>Go back to your work, click <strong>Publish</strong> and choose the snapshot option — then come back here to see it signed out.<br><br><button type="button" class="btn primary" data-go="publish">Publish a snapshot</button></div>`; wire(body); return; }
+    url.textContent = linkFor(s);
+    if (s.revoked) { body.innerHTML = `<div class="gone"><h2>This snapshot is no longer available</h2>The author revoked it. Ask them for a new link.</div>`; return; }
+    if (s.aud === "people" && !s.gateOpened) {
+      body.innerHTML = `<div class="gate"><h2>Open “${esc(s.title)}”</h2><p>This snapshot was shared with specific people. Confirm the email it was sent to and we’ll send a one-time link — no account needed.</p>
+        <div class="field" style="text-align:left"><label for="gate-email">Your email</label><input class="in" type="text" id="gate-email" value="${esc(s.emails[0] || "")}"></div><button type="button" class="btn primary" id="gate-go">Continue</button></div>`;
+      body.querySelector("#gate-go").addEventListener("click", () => { s.gateOpened = true; renderViewer(); }); return;
+    }
+    s.views += 1; s.vtab = s.vtab || (s.incPage ? "page" : (s.incSql || s.incResults ? "data" : "tables"));
+    const a = ASSETS[s.kind], isNb = s.kind === "notebook";
+    const date = s.created.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
+    let main;
+    if (isNb) {
+      main = `<div class="nbbar"><button type="button" class="btn sm" id="toggle-code" aria-pressed="${s.showCode && s.incSql}">${s.showCode && s.incSql ? "Hide code" : "Show code"}</button>
+        ${(s.tables || []).some(Boolean) ? `<button type="button" class="btn sm" id="nb-data" aria-pressed="${!!s.nbTables}">▤ Source tables (${(s.tables || []).filter(Boolean).length})</button>` : ""}<span class="draft">6 cells · outputs as last run · nothing re-runs</span></div>
+        <div id="nb-data-panel" ${s.nbTables ? "" : "hidden"} style="margin-bottom:10px">${catalogPanel({ viewer: true, dataMode: s.dataMode, dropPii: s.hidden, tables: s.tables })}</div>
+        <div id="viewer-content" class="${s.showCode && s.incSql ? "" : "codehidden"}">${notebook({ hideSecret: s.hidden, viewer: true })}</div>`;
+    } else {
+      const showData = s.incSql || s.incResults;
+      const nT = (s.tables || []).filter(Boolean).length; const showTables = nT > 0;
+      main = `<div class="subtabs" role="tablist"><button type="button" role="tab" aria-selected="${s.vtab === "page"}" data-vtab="page">Page 1</button>${showData ? `<span class="sep"></span><button type="button" role="tab" aria-selected="${s.vtab === "data"}" data-vtab="data">▤ Data</button>` : ""}${showTables ? `<button type="button" role="tab" aria-selected="${s.vtab === "tables"}" data-vtab="tables">Source tables (${nT})</button>` : ""}<span style="flex:1"></span><span class="draft">frozen at publish time · filters disabled</span></div>
+        ${s.vtab === "page" ? (s.incPage ? dashboardPage(false) : `<div class="empty">The author didn’t include the page — see the Data tab.</div>`) : s.vtab === "data" ? dataTab({ viewer: true, dropPii: s.hidden, dataMode: s.incResults ? s.dataMode : "hide", csv: s.csv, sql: s.incSql }) : catalogPanel({ viewer: true, dataMode: s.dataMode, dropPii: s.hidden, tables: s.tables })}`;
+    }
+    body.innerHTML = `
+      <div class="vhead"><div><h2>${esc(s.title)}</h2><div class="vmeta">${s.showName ? "Grace L. · " : ""}Published ${date} · Snapshot · Expires ${expiryDate(s)}${s.updated ? " · Updated " + s.updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}${s.hidden ? " · " + a.flag.note : ""}</div>${s.desc ? `<div class="vdesc">${esc(s.desc)}</div>` : ""}</div>
+        <div class="actions">${isNb && s.csv ? `<button type="button" class="btn sm">Download .ipynb</button>` : ""}<button type="button" class="btn sm primary">${isNb ? "Open a copy in your workspace" : "Open a copy in your workspace"}</button></div></div>
+      <div class="vbody">${main}</div>
+      <div class="vfoot"><span class="brand"><span class="mark" aria-hidden="true"></span>Made with Databricks Free Edition</span><span>Free for students, educators and hobbyists.</span><span class="right"><a href="#" onclick="return false">Report this page</a>${s.aud === "link" ? ` · <a href="#" onclick="return false">Try it yourself — it’s free</a>` : ` · Shared privately with ${esc(s.emails.join(", "))}`}</span></div>`;
+    body.querySelectorAll("[data-vtab]").forEach(b => b.addEventListener("click", () => { s.vtab = b.dataset.vtab; s.views -= 1; renderViewer(); }));
+    body.querySelectorAll("[data-ds]").forEach(b => b.addEventListener("click", () => { state.ds = +b.dataset.ds; s.views -= 1; renderViewer(); }));
+    const tc = body.querySelector("#toggle-code");
+    if (tc) tc.addEventListener("click", () => { const vc = body.querySelector("#viewer-content"); const hid = vc.classList.toggle("codehidden"); tc.textContent = hid ? "Show code" : "Hide code"; tc.setAttribute("aria-pressed", String(!hid)); });
+    const nd = body.querySelector("#nb-data");
+    if (nd) nd.addEventListener("click", () => { s.nbTables = !s.nbTables; s.views -= 1; renderViewer(); });
+    wireCatalog(body, () => { s.views -= 1; renderViewer(); });
+  }
+  function expiryDate(s) { const d = new Date(s.created); const m = { "1 week": 0, "1 month": 1, "6 months": 6, "1 year": 12 }[s.expiry]; if (m === 0) d.setDate(d.getDate() + 7); else d.setMonth(d.getMonth() + m); return d.toLocaleDateString(undefined, { month: "short", year: "numeric" }); }
+
+  // ---------- manage ----------
+  function renderManage() {
+    const el = document.getElementById("manage-body");
+    if (!state.snapshots.length) { el.innerHTML = `<div class="empty">Nothing published yet. <button type="button" class="btn sm" data-go="publish" style="margin-left:8px">Publish a snapshot</button></div>`; wire(el); return; }
+    el.innerHTML = `<div class="overflow"><table class="list"><thead><tr><th>Snapshot</th><th>Includes</th><th>Audience</th><th>Status</th><th class="num">Views</th><th>Expires</th><th>Actions</th></tr></thead><tbody>
+      ${state.snapshots.map(s => `<tr data-id="${s.id}">
+        <td><div class="name"><span class="ico ${s.kind === "notebook" ? "nb" : "dash"}" aria-hidden="true"></span>${esc(s.title)}</div><div class="sub" style="font-family:var(--mono)">${linkFor(s)}</div></td>
+        <td class="sub">${describeIncl(s)}</td>
+        <td>${s.aud === "link" ? "Anyone with the link" : esc(s.emails.join(", "))}</td>
+        <td><span class="status ${s.revoked ? "off" : "live"}">${s.revoked ? "Revoked" : "Live"}</span>${s.updated ? `<div class="sub">Updated ${s.updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</div>` : ""}</td>
+        <td class="num">${s.views}</td><td>${expiryDate(s)}</td>
+        <td><div class="tacts"><button type="button" class="btn sm" data-act="view">Open as viewer</button><button type="button" class="btn sm" data-act="update" ${s.revoked ? "disabled" : ""}>Update snapshot</button><button type="button" class="btn sm danger" data-act="revoke" ${s.revoked ? "disabled" : ""}>Revoke</button></div>
+          <div class="confirm" data-confirm><span>Viewers will see “no longer available.”</span><button type="button" class="btn sm danger" data-act="revoke-yes">Revoke link</button><button type="button" class="btn sm" data-act="revoke-no">Keep</button></div></td></tr>`).join("")}</tbody></table></div>`;
+    el.querySelectorAll("[data-act]").forEach(b => b.addEventListener("click", () => {
+      const tr = b.closest("tr"), s = state.snapshots.find(x => x.id === tr.dataset.id), act = b.dataset.act;
+      if (act === "view") { state.current = s; go("viewer"); }
+      if (act === "update") { s.updated = new Date(); toast("Snapshot updated to the current draft"); renderManage(); }
+      if (act === "revoke") tr.querySelector("[data-confirm]").dataset.open = "true";
+      if (act === "revoke-no") tr.querySelector("[data-confirm]").dataset.open = "false";
+      if (act === "revoke-yes") { s.revoked = true; toast("Link revoked"); renderManage(); renderWork(); }
+    }));
+  }
+  function wire(root) { root.querySelectorAll("[data-go]").forEach(el => el.addEventListener("click", e => { e.preventDefault(); go(el.dataset.go); })); }
+
+
+  // ---------- guided tour ----------
+  const TOUR = [
+    { center: true, text: "<strong>Prototype — a proposed Free Edition feature, not a Databricks product.</strong><br>Example data: Bay Wheels rides in San Francisco. Five quick steps, or skip and click around on your own." },
+    { target: "#publish-scrim .hd", enter: () => { closeAll(); show("work"); openPublish(true); }, text: "<strong>The proposal.</strong> A Publish button on dashboards and notebooks that creates a read-only snapshot at a link that works without a Databricks account. Nothing re-runs, and nothing outside the snapshot is reachable." },
+    { target: "#incl", enter: () => { ensurePublish(); }, text: "<strong>What goes in.</strong> Queries, results and the source tables are included by default — like a Kaggle notebook — because Free Edition is non-commercial. The author can dial down to a preview, schema only, or nothing." },
+    { target: "#scan", enter: () => { ensurePublish(); }, text: "<strong>Genie checks it first.</strong> Before anything goes public, Genie scans the queries, outputs and tables for personal data and secrets — here, a column computed from <code>rider_email</code>. Drop it or keep it deliberately; Next drops it and publishes." },
+    { target: "#viewer-who", enter: () => { if (!state.current || state.current.revoked) { ensurePublish(); if (!state.hidden) document.getElementById("hide-fix").click(); document.getElementById("publish-form").requestSubmit(); } closeAll(); if (state.current) { state.current.gateOpened = true; state.current.vtab = "data"; } show("viewer"); }, text: "<strong>The viewer.</strong> Your workspace disappears — this is the visitor’s browser. Not signed in, no compute running. The Data tab carries the SQL and frozen results; Source tables shows the raw data the way Catalog Explorer does. “Open a copy in your workspace” is where new users come from." },
+    { target: "#manage-body table", enter: () => { closeAll(); show("manage"); }, text: "<strong>Control.</strong> Every snapshot in one place — what was included, who can open it, how many did — with Update and Revoke. Registered in Unity Catalog with lineage, and logged." },
+    { center: true, text: "That’s it. Explore freely — try the notebook tab, publish with other options, revoke a link and reopen it as a viewer. The <strong>?</strong> button restarts this tour." },
+  ];
+  let tourIdx = -1;
+  const hl = document.getElementById("tour-hl"), card = document.getElementById("tour-card");
+  function closeAll() { document.querySelectorAll('.scrim[data-open="true"]').forEach(x => x.dataset.open = "false"); }
+  function ensurePublish() { if (document.getElementById("publish-scrim").dataset.open !== "true") { closeAll(); show("work"); openPublish(true); } }
+  function startTour(i) { tourIdx = i; runStep(); }
+  function endTour() { tourIdx = -1; hl.hidden = true; card.hidden = true; }
+  function runStep() {
+    const st = TOUR[tourIdx]; if (!st) { endTour(); return; }
+    if (st.enter) st.enter();
+    document.getElementById("tour-step").textContent = `Step ${tourIdx + 1} of ${TOUR.length}`;
+    document.getElementById("tour-text").innerHTML = st.text;
+    document.getElementById("tour-back").disabled = tourIdx === 0;
+    document.getElementById("tour-next").textContent = tourIdx === TOUR.length - 1 ? "Done" : (tourIdx === 0 ? "Start tour" : "Next");
+    document.getElementById("tour-skip").textContent = tourIdx === 0 ? "Explore on my own" : "Skip tour";
+    hl.hidden = false; card.hidden = false;
+    requestAnimationFrame(() => requestAnimationFrame(place));
+  }
+  function place() {
+    const st = TOUR[tourIdx]; if (!st) return;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    if (st.center) {
+      hl.className = "tour-hl center"; hl.style.cssText = "top:50%;left:50%;width:0;height:0";
+      card.className = "tour-card center"; card.style.cssText = `top:${Math.max(24, vh / 2 - 90)}px;left:${vw / 2 - 200}px`;
+      return;
+    }
+    const el = document.querySelector(st.target);
+    if (!el) { hl.className = "tour-hl center"; hl.style.cssText = "top:50%;left:50%;width:0;height:0"; card.className = "tour-card center"; card.style.cssText = `top:${vh / 2 - 60}px;left:${vw / 2 - 200}px`; return; }
+    el.scrollIntoView({ block: "center", inline: "nearest" });
+    const r = el.getBoundingClientRect(), pad = 6;
+    hl.className = "tour-hl"; hl.style.cssText = `top:${r.top - pad}px;left:${r.left - pad}px;width:${r.width + pad * 2}px;height:${r.height + pad * 2}px`;
+    const cw = 320, ch = card.offsetHeight || 140;
+    let left = Math.min(Math.max(12, r.left), vw - cw - 12);
+    let top = r.bottom + pad + 12, above = false;
+    if (top + ch > vh - 12) { top = r.top - pad - 12 - ch; above = true; }
+    if (top < 12) { top = 12; above = false; }
+    card.className = "tour-card" + (above ? " above" : ""); card.style.cssText = `top:${top}px;left:${left}px`;
+  }
+  document.getElementById("tour-next").addEventListener("click", () => { tourIdx += 1; if (tourIdx >= TOUR.length) endTour(); else runStep(); });
+  document.getElementById("tour-back").addEventListener("click", () => { if (tourIdx > 0) { tourIdx -= 1; runStep(); } });
+  document.getElementById("tour-skip").addEventListener("click", endTour);
+  document.getElementById("help-btn").addEventListener("click", () => { if (tourIdx >= 0) endTour(); toggleHelp(); });
+  document.getElementById("helppop-x").addEventListener("click", () => toggleHelp(false));
+  document.getElementById("replay-tour").addEventListener("click", () => { toggleHelp(false); startTour(0); });
+  document.querySelectorAll("#flow [data-go]").forEach(el => el.addEventListener("click", e => { e.stopPropagation(); toggleHelp(false); go(el.dataset.go); }));
+  window.addEventListener("resize", () => { if (tourIdx >= 0) place(); });
+  window.addEventListener("scroll", () => { if (tourIdx >= 0) place(); }, true);
+  document.addEventListener("keydown", e => { if (tourIdx < 0) return; if (e.key === "ArrowRight") document.getElementById("tour-next").click(); if (e.key === "ArrowLeft") document.getElementById("tour-back").click(); if (e.key === "Escape") endTour(); });
+  startTour(0);
+  setStep("work");
+
+  // ---------- utils ----------
+  let toastTimer;
+  function toast(msg) { const t = document.getElementById("toast"); t.textContent = msg; t.dataset.show = "true"; clearTimeout(toastTimer); toastTimer = setTimeout(() => t.dataset.show = "false", 2000); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
+})();
+</script>
