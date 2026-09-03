@@ -1,4 +1,5 @@
-<title>Publish Snapshot Prototype</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex">
+<title>Publish Snapshot Prototype</title></head><body>
 <style>
   :root {
     color-scheme: light;
@@ -68,21 +69,39 @@
   .help[aria-expanded="true"] { background: var(--blue); color: #fff; border-color: var(--blue); }
   @media (prefers-reduced-motion: reduce) { .tour-hl { transition: none; } }
   /* ---------- shell ---------- */
-  .shell { background: var(--bg); min-height: 100vh; display: grid; grid-template-rows: 52px 1fr; }
+  .shell { background: var(--bg); min-height: 100vh; display: grid; grid-template-rows: 52px auto 1fr; }
   .top { display: grid; grid-template-columns: 1fr minmax(320px, 620px) 1fr; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--line); gap: 12px; }
   .top .left { display: flex; align-items: center; gap: 14px; }
   .top .right { display: flex; align-items: center; gap: 12px; justify-content: flex-end; }
   .logo { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 15px; letter-spacing: -.01em; line-height: 1; }
   .logo .mark { width: 16px; height: 16px; background: var(--red); border-radius: 3px 3px 3px 8px; }
   .logo small { display: block; font-size: 9px; font-weight: 500; color: var(--muted); margin-top: 2px; letter-spacing: 0; }
-  .proto-tag { font-size: 10px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 3px; padding: 1px 6px; margin-left: 4px; }
+  .proto-tag { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #7a4b00; background: #fff3cd; border: 1px solid #f0d9a8; border-radius: 3px; padding: 3px 8px; margin-left: 10px; cursor: help; white-space: nowrap; font-size: 11px; }
   .search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; color: var(--faint); background: var(--bg); }
   .search span:last-child { margin-left: auto; font-size: 11px; }
   .verify { background: var(--blue-bg); color: var(--blue); border-radius: 999px; padding: 4px 12px; font-weight: 500; }
   .ws { color: var(--ink); font-weight: 500; }
   .iconbtn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid transparent; background: transparent; display: grid; place-items: center; color: var(--muted); }
   .iconbtn.genie { background: #f6eaf3; color: #b03a8a; }
-  .avatar { width: 28px; height: 28px; border-radius: 50%; background: #2c3e50; color: #fff; display: grid; place-items: center; font-weight: 600; font-size: 12px; }
+  .avatar { width: 28px; height: 28px; border-radius: 50%; background: #2c3e50; color: #fff; display: grid; place-items: center; font-weight: 600; font-size: 12px; border: 0; }
+  .avatar.sam { background: #1b7a45; }
+  .acct { position: relative; }
+  .acctmenu { position: absolute; right: 0; top: 36px; width: 300px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 8px 24px rgba(17,23,26,.18); z-index: 18; padding: 6px; }
+  .acctmenu[hidden] { display: none; }
+  .acctmenu .who { padding: 8px 10px; font-size: 12px; color: var(--muted); border-bottom: 1px solid var(--line-2); }
+  .acctmenu .who strong { display: block; color: var(--ink); font-size: 13px; }
+  .acctmenu [role="menuitem"] { width: 100%; text-align: left; border: 0; background: transparent; padding: 8px 10px; border-radius: 4px; }
+  .acctmenu [role="menuitem"]:hover { background: var(--bg-2); }
+  .acctmenu .note { padding: 6px 10px 6px; font-size: 11px; color: var(--muted); border-top: 1px solid var(--line-2); }
+  .sambar { display: flex; align-items: center; gap: 10px; background: var(--green-bg); border-bottom: 1px solid #bfe0cb; padding: 6px 16px; font-size: 12.5px; }
+  .sambar[hidden] { display: none; }
+  .sambar .btn { margin-left: auto; }
+  .shell { grid-template-rows: 52px auto 1fr; }
+  body.viewer-mode .sambar { display: none; }
+  .copybanner { display: flex; align-items: center; gap: 10px; background: var(--green-bg); border: 1px solid #bfe0cb; border-radius: 4px; padding: 8px 12px; margin-bottom: 12px; font-size: 12.5px; }
+  .copybanner .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex: none; }
+  .emptyws { padding: 60px 24px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 6px; }
+  .emptyws h2 { color: var(--ink); font-size: 18px; margin: 0 0 6px; }
   .body { display: grid; grid-template-columns: 224px 1fr; min-height: 0; }
   @media (max-width: 900px) { .body { grid-template-columns: 1fr; } .side { display: none; } }
 
@@ -265,16 +284,19 @@
   body.viewer-mode .top, body.viewer-mode .side, body.viewer-mode .filetabs { display: none; }
   body.viewer-mode .body { grid-template-columns: 1fr; }
   body.viewer-mode .pane { padding: 14px 22px 30px; max-width: 1240px; margin: 0 auto; width: 100%; }
-  .previewbar { display: flex; align-items: center; gap: 12px; background: var(--ink); color: #fff; border-radius: 6px; padding: 8px 14px; margin-bottom: 12px; font-size: 13px; }
-  .previewbar .eye { width: 22px; height: 22px; border-radius: 50%; background: #34434b; display: grid; place-items: center; flex: none; }
+  .previewbar { display: flex; align-items: center; gap: 12px; background: var(--blue-bg); color: var(--ink); border: 1px solid #c9dcec; border-radius: 6px; padding: 7px 12px; margin-bottom: 14px; font-size: 13px; }
+  .previewbar .eye { width: 22px; height: 22px; border-radius: 50%; background: var(--blue); color: #fff; display: grid; place-items: center; flex: none; }
   .previewbar .t strong { font-weight: 600; }
-  .previewbar .t span { color: #c5cdd2; }
+  .previewbar .t span { color: var(--ink-2); }
   .previewbar .acts { margin-left: auto; display: flex; gap: 6px; }
-  .previewbar .btn { background: transparent; color: #fff; border-color: #56656d; }
-  .previewbar .btn:hover { background: #2b383f; }
-  .previewbar .btn.primary { background: #fff; color: var(--ink); border-color: #fff; }
-  .previewbar .btn.primary:hover { background: #e8ecef; }
-  body.viewer-mode .browser { box-shadow: 0 10px 30px rgba(17,23,26,.18); }
+  body.viewer-mode { background: #e9edf0; }
+  body.viewer-mode .browser { box-shadow: 0 12px 32px rgba(17,23,26,.16); border-color: #cfd6db; }
+  .tabstrip { display: flex; align-items: flex-end; gap: 6px; background: #dfe4e8; padding: 8px 12px 0; }
+  .tabstrip .dots span { display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: #c0c8ce; margin: 0 4px 8px 0; }
+  .tabstrip .btab { background: var(--bg-3); border: 1px solid #cfd6db; border-bottom: 0; border-radius: 8px 8px 0 0; padding: 6px 12px; font-size: 12px; color: var(--ink-2); display: inline-flex; gap: 8px; align-items: center; max-width: 360px; }
+  .tabstrip .btab .fav { width: 12px; height: 12px; background: var(--red); border-radius: 2px 2px 2px 6px; flex: none; }
+  .tabstrip .btab .tt { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chrome .lock { color: var(--muted); font-size: 11px; margin-right: 6px; }
 
   /* ---------- viewer ---------- */
   .browser { border: 1px solid var(--line); border-radius: 6px; overflow: hidden; background: var(--bg); }
@@ -342,7 +364,7 @@
   <div class="top">
     <div class="left">
       <button type="button" class="iconbtn" aria-label="Toggle sidebar"><svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1.5" y="2.5" width="13" height="11" rx="1.5"/><path d="M6 2.5v11"/></svg></button>
-      <div class="logo"><img src="data:image/png;base64,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" alt="Databricks Free Edition" style="height:30px;width:auto;display:block"><span class="proto-tag" title="This is a prototype, not a Databricks product">Prototype</span></div>
+      <div class="logo"><img src="data:image/png;base64,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" alt="Databricks Free Edition" style="height:30px;width:auto;display:block"><button type="button" class="proto-tag" id="proto-tag" title="A clickable mockup of a proposed feature — not a Databricks product. Example data.">Prototype</button></div>
     </div>
     <div class="search" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><span>Search data, notebooks, recents, and more…</span><span>⌘ + P</span></div>
     <div class="right">
@@ -350,10 +372,16 @@
       <span class="ws">workspace ▾</span>
       <button type="button" class="iconbtn genie" aria-label="Genie Code"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.6 3.9L13.5 6.5l-3.9 1.6L8 12l-1.6-3.9L2.5 6.5l3.9-1.6z"/></svg></button>
       <button type="button" class="iconbtn" aria-label="Apps"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><circle cx="3" cy="3" r="1.5"/><circle cx="8" cy="3" r="1.5"/><circle cx="13" cy="3" r="1.5"/><circle cx="3" cy="8" r="1.5"/><circle cx="8" cy="8" r="1.5"/><circle cx="13" cy="8" r="1.5"/><circle cx="3" cy="13" r="1.5"/><circle cx="8" cy="13" r="1.5"/><circle cx="13" cy="13" r="1.5"/></svg></button>
-      <span class="avatar" aria-label="Signed in as L">L</span>
+      <div class="acct"><button type="button" class="avatar" id="avatar-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Account menu">G</button>
+        <div class="acctmenu" id="acctmenu" hidden role="menu">
+          <div class="who" id="acct-who"></div>
+          <button type="button" role="menuitem" id="switch-acct">Back to Grace’s workspace (author)</button>
+          <div class="note">Demo: Sam is a visitor who opened a copy from Grace’s link. Each has their own Free Edition workspace.</div>
+        </div></div>
     </div>
   </div>
 
+  <div class="sambar" id="sambar" hidden><span class="avatar sam" style="width:20px;height:20px;font-size:10px">S</span><span><strong>Visitor demo account — Sam R.</strong> This is a second, separate Free Edition workspace. Sam got here by opening Grace’s link and choosing “Open a copy.”</span><button type="button" class="btn sm" id="sambar-back">Back to Grace’s workspace</button></div>
   <div class="body">
     <aside class="side" aria-label="Sidebar">
       <button type="button" class="newbtn"><span class="plus">+</span> New</button>
@@ -386,8 +414,8 @@
 
     <div class="content">
       <div class="filetabs" role="tablist" aria-label="Open files">
-        <button type="button" class="filetab" role="tab" aria-selected="true" data-asset="dashboard"><span class="ico dash" aria-hidden="true"></span>Bay Wheels Rides <span class="draft">(Draft)</span><span class="x" aria-hidden="true">×</span></button>
-        <button type="button" class="filetab" role="tab" aria-selected="false" data-asset="notebook"><span class="ico nb" aria-hidden="true"></span>baywheels_analysis<span class="x" aria-hidden="true">×</span></button>
+        <button type="button" class="filetab" role="tab" aria-selected="true" data-asset="dashboard"><span class="ico dash" aria-hidden="true"></span><span class="lab">Bay Wheels Rides</span> <span class="draft">(Draft)</span><span class="x" aria-hidden="true">×</span></button>
+        <button type="button" class="filetab" role="tab" aria-selected="false" data-asset="notebook"><span class="ico nb" aria-hidden="true"></span><span class="lab">baywheels_analysis</span><span class="x" aria-hidden="true">×</span></button>
         <button type="button" class="plus" aria-label="New tab">+</button>
       </div>
 
@@ -409,12 +437,13 @@
         <section class="screen" id="screen-viewer">
           <div class="previewbar" role="status">
             <span class="eye" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.6"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg></span>
-            <div class="t"><strong>Previewing as a visitor</strong> <span>— this is what someone without a Databricks account sees at your link. Your workspace isn’t visible to them.</span></div>
+            <div class="t"><strong>Preview as a visitor</strong> <span>— what someone without a Databricks account sees at your link. Your workspace isn’t visible to them.</span></div>
             <div class="acts"><button type="button" class="btn sm" data-go="manage">Published</button><button type="button" class="btn sm primary" data-go="work">Back to my workspace</button></div>
           </div>
           <div class="browser">
+            <div class="tabstrip"><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span><span class="btab"><span class="fav" aria-hidden="true"></span><span class="tt" id="viewer-tabtitle">Databricks</span></span></div>
             <div class="chrome">
-              <span class="dots" aria-hidden="true"><span></span><span></span><span></span></span>
+              <span class="lock" aria-hidden="true">🔒</span>
               <div class="url" id="viewer-url">share.databricks.example/…</div>
               <span class="who" id="viewer-who">Not signed in</span>
             </div>
@@ -451,12 +480,12 @@
 <!-- ================= PUBLISH ================= -->
 <div class="scrim" id="publish-scrim">
   <form class="dlg" role="dialog" aria-modal="true" aria-labelledby="pub-h" id="publish-form" novalidate>
-    <div class="hd"><h2 id="pub-h">Publish a snapshot of <span data-asset-name>Bay Wheels Rides</span></h2><span class="badge-new" style="margin-left:8px">new</span><button type="button" class="x" aria-label="Close" data-close="publish-scrim">×</button></div>
+    <div class="hd"><h2 id="pub-h">Publish a snapshot</h2><span class="badge-new" style="margin-left:8px">new</span><button type="button" class="x" aria-label="Close" data-close="publish-scrim">×</button></div>
     <div class="bd">
       <div id="snap-opts">
-        <p style="margin:0 0 4px;color:var(--ink-2)">A read-only copy — visualizations, queries and data — at a link that works without a Databricks account. Nothing re-runs; nothing outside the snapshot is reachable.</p>
+        <p style="margin:0 0 4px;color:var(--ink-2)">A read-only copy of what you choose below, at a link that works without a Databricks account. Nothing re-runs; nothing you don’t pick is reachable.</p>
         <div class="section">
-          <h3>What’s included</h3>
+          <h3>What to share</h3>
           <div class="incl" id="incl"></div>
           <div class="scan" id="scan"></div>
         </div>
@@ -500,6 +529,19 @@
   </div>
 </div>
 
+<!-- ================= SIGN IN (visitor) ================= -->
+<div class="scrim" id="signin-scrim">
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="signin-h" style="max-width:460px">
+    <div class="hd"><h2 id="signin-h">Sign in to open a copy</h2><button type="button" class="x" aria-label="Close" data-close="signin-scrim">×</button></div>
+    <div class="bd">
+      <p style="margin:0 0 10px;color:var(--ink-2)">Looking is free. To run or edit this project you need your own Free Edition workspace — the copy runs on <strong>your</strong> compute, and nothing touches the author’s.</p>
+      <div class="field"><span class="lbl">What you’ll get</span><div class="sub" id="signin-what"></div></div>
+      <div class="field"><label for="signin-email">Email</label><input class="in" type="text" id="signin-email" value="sam.r@berkeley.edu"></div>
+    </div>
+    <div class="ft"><button type="button" class="btn" data-close="signin-scrim">Cancel</button><button type="button" class="btn" id="signin-create">Create a free account</button><button type="button" class="btn primary" id="signin-go">Continue as Sam (demo visitor)</button></div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
@@ -537,7 +579,8 @@ ORDER BY 2 DESC`,
       flag: { text: "Secret: cell 5 prints what looks like an API token (<code>app_token 4f8a…</code>)", fix: "Hide output", done: "Cell 5 output hidden from the snapshot", note: "1 cell output hidden by the author" },
       facts: ["6 cells (2 SQL, 3 Python, 1 text), 4 outputs, 1 chart", "3 tables referenced: baywheels_trips, stations, rider_survey (all uploaded CSVs)"] },
   };
-  const state = { asset: "dashboard", subtab: "page", ds: 0, snapshots: [], hidden: false, acknowledged: false, current: null };
+  const USERS = { grace: { name: "Grace L.", initial: "G", role: "author", cls: "" }, sam: { name: "Sam R.", initial: "S", role: "visitor", cls: "sam" } };
+  const state = { user: "grace", cloned: null, asset: "dashboard", subtab: "page", ds: 0, snapshots: [], hidden: false, acknowledged: false, current: null };
 
 
   const TABLES = [
@@ -561,7 +604,7 @@ ORDER BY 2 DESC`,
     const rows = o.viewer && o.dataMode === "preview" ? t.sample.slice(0, 3) : t.sample;
     const body = tab === "overview" ? `<div class="desc">${t.desc}</div><table class="res"><thead><tr><th>Column</th><th>Type</th><th>Comment</th></tr></thead><tbody>${t.cols.map(c => `<tr><td>${c[0]}</td><td>${c[1]}</td><td>${piiCol(c) ? '<span class="removed">Removed from the snapshot by the author</span>' : c[2]}</td></tr>`).join("")}</tbody></table>`
       : tab === "sample" ? (hideSample ? `<div class="rows">The author chose to include the schema only.</div>` : `<div class="overflow"><table class="res"><thead><tr>${t.cols.map(c => `<th>${c[0]}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `<tr>${r.map((v, i) => `<td>${piiCol(t.cols[i]) ? '<span class="removed">—</span>' : v}</td>`).join("")}</tr>`).join("")}</tbody></table></div><div class="rows">Showing ${rows.length} of ${t.rows} rows${o.viewer ? " · frozen at publish time" : ""}</div>`)
-      : `<dl class="kv"><dt>Type</dt><dd>Managed table · Delta</dd><dt>Location</dt><dd>workspace.default.${t.name}</dd><dt>Rows</dt><dd>${t.rows}</dd><dt>Size</dt><dd>${t.size}</dd><dt>Created by</dt><dd>${o.viewer ? "Grace L." : "L (you)"}</dd><dt>Source</dt><dd>${t.source}</dd><dt>Last updated</dt><dd>Sep 2, 2026</dd></dl>`;
+      : `<dl class="kv"><dt>Type</dt><dd>Managed table · Delta</dd><dt>Location</dt><dd>workspace.default.${t.name}</dd><dt>Rows</dt><dd>${t.rows}</dd><dt>Size</dt><dd>${t.size}</dd><dt>Created by</dt><dd>${o.viewer ? "Grace L." : USERS[state.user].name + " (you)"}</dd><dt>Source</dt><dd>${state.user === "sam" && !o.viewer ? "Copied from Grace L.’s published snapshot" : t.source}</dd><dt>Last updated</dt><dd>Sep 2, 2026</dd></dl>`;
     return `<div class="cat"><div class="tree"><div class="h">Catalog</div><div class="node">▾ <strong>workspace</strong></div><div class="node" style="padding-left:18px">▾ default</div>
         ${idx.map(i => `<button type="button" aria-selected="${i === (state.tbl || 0)}" data-tbl="${i}"><span style="color:var(--muted)">▤</span>${TABLES[i].name}</button>`).join("")}</div>
       <div class="main"><div class="crumb">workspace › default › ${t.name}</div><div class="th"><strong>${t.name}</strong><span class="tag">Table</span><span class="tag">Delta</span>${o.viewer ? `<span class="tag">in snapshot</span>` : ""}</div>
@@ -646,22 +689,45 @@ ORDER BY 2 DESC`,
     const c6 = cell(6, "python", `df.to_csv("/Volumes/workspace/default/out/hourly_rides.csv")`, { html: `<code>Wrote 24 rows</code>` });
     return `<div class="cells">${md}${c2}${c3}${c4}${c5}${c6}</div>`;
   }
+  function renderAccount() {
+    const u = USERS[state.user];
+    const av = document.getElementById("avatar-btn"); av.textContent = u.initial; av.className = "avatar " + u.cls;
+    document.getElementById("acct-who").innerHTML = `Signed in as<strong>${u.name} · ${u.role === "author" ? "author" : "visitor"} · Free Edition</strong>`;
+    document.getElementById("switch-acct").style.display = state.user === "sam" ? "" : "none";
+    document.querySelector("#acctmenu .note").style.display = state.user === "sam" ? "" : "none";
+    document.getElementById("nav-pub").style.display = state.user === "grace" ? "" : "none";
+    document.getElementById("sambar").hidden = state.user !== "sam";
+  }
   function renderWork() {
+    renderAccount();
+    const body = document.getElementById("work-body");
+    const isSam = state.user === "sam";
+    document.querySelectorAll('.filetab[role="tab"]').forEach(t => { t.style.display = (state.user === "sam" && state.cloned && !(t.dataset.asset === "dashboard" ? state.cloned.dash : state.cloned.nb)) ? "none" : ""; });
+    if (isSam && !state.cloned) {
+      document.getElementById("work-title").textContent = "Sam’s workspace";
+      document.getElementById("work-state").textContent = "";
+      document.querySelectorAll('.filetab[role="tab"]').forEach(t => t.setAttribute("aria-selected", "false"));
+      body.innerHTML = `<div class="emptyws"><h2>Nothing here yet</h2>This is the visitor’s own Free Edition workspace. Open a published snapshot and choose <strong>Open a copy in your workspace</strong> to bring a project in.<br><br><button type="button" class="btn primary" data-go="viewer">Open the snapshot link</button></div>`;
+      wire(body); return;
+    }
     const a = ASSETS[state.asset];
-    document.getElementById("work-title").textContent = a.name;
+    document.getElementById("work-title").textContent = a.name + (isSam ? " (copy)" : "");
     document.querySelectorAll("[data-asset-name]").forEach(el => el.textContent = a.name);
+    document.querySelectorAll('.filetab[role="tab"]').forEach(t => { const lab = t.querySelector(".lab"); if (lab) lab.textContent = (t.dataset.asset === "dashboard" ? "Bay Wheels Rides" : "baywheels_analysis") + (isSam ? " (copy)" : ""); });
     document.querySelectorAll('.filetab[role="tab"]').forEach(t => t.setAttribute("aria-selected", String(t.dataset.asset === state.asset)));
     document.getElementById("share-link").innerHTML = `${a.link} <span style="color:var(--faint)">— opens a sign-in page for anyone else</span>`;
-    const n = state.snapshots.filter(s => s.kind === a.kind && !s.revoked).length;
+    const n = isSam ? 0 : state.snapshots.filter(s => s.kind === a.kind && !s.revoked).length;
     document.getElementById("work-state").textContent = (a.kind === "dashboard" ? "Draft" : "Serverless · last run 2 min ago") + (n ? ` · ${n} live snapshot${n > 1 ? "s" : ""}` : "");
-    const body = document.getElementById("work-body");
+    const banner = isSam ? `<div class="copybanner"><span class="dot"></span><span><strong>Copied from ${USERS.grace.name}’s snapshot.</strong> Runs on your compute, in your workspace. Nothing here is connected to the author’s account.</span><span style="flex:1"></span><button type="button" class="btn sm" data-go="viewer">View the original</button></div>` : "";
     if (a.kind === "dashboard") {
-      body.innerHTML = `<div class="subtabs" role="tablist"><button type="button" role="tab" aria-selected="${state.subtab === "data"}" data-sub="data">▤ Data</button><span class="sep"></span><button type="button" role="tab" aria-selected="${state.subtab === "page"}" data-sub="page">Page 1 <span style="color:var(--faint)">⋮</span></button><button type="button" class="plus" aria-label="Add page">+</button><span style="flex:1"></span><button type="button" role="tab" aria-selected="${state.subtab === "tables"}" data-sub="tables" title="Opens the source tables in Catalog">Source tables (3)</button></div>
+      body.innerHTML = banner + `<div class="subtabs" role="tablist"><button type="button" role="tab" aria-selected="${state.subtab === "data"}" data-sub="data">▤ Data</button><span class="sep"></span><button type="button" role="tab" aria-selected="${state.subtab === "page"}" data-sub="page">Page 1 <span style="color:var(--faint)">⋮</span></button><button type="button" class="plus" aria-label="Add page">+</button><span style="flex:1"></span><button type="button" role="tab" aria-selected="${state.subtab === "tables"}" data-sub="tables" title="Opens the source tables in Catalog">Source tables (3)</button></div>
         ${state.subtab === "page" ? `<div class="gfilters">⏷ Global filters</div>${dashboardPage(true)}` : state.subtab === "data" ? dataTab() : catalogPanel()}`;
     } else {
-      body.innerHTML = `<div class="nbbar"><button type="button" class="btn sm">▶ Run all</button><span class="pill"><span class="dot"></span>Serverless</span><span class="pill">Python ▾</span><span class="draft">All changes saved</span><span style="flex:1"></span><button type="button" class="btn sm" id="au-tables" aria-pressed="${!!state.nbTables}">▤ Source tables (3)</button></div>${state.nbTables ? `<div style="margin-bottom:10px">${catalogPanel()}</div>` : ""}${notebook()}`;
+      body.innerHTML = banner + `<div class="nbbar"><button type="button" class="btn sm" id="run-all">▶ Run all</button><span class="pill"><span class="dot"></span>Serverless</span><span class="pill">Python ▾</span><span class="draft">All changes saved</span><span style="flex:1"></span><button type="button" class="btn sm" id="au-tables" aria-pressed="${!!state.nbTables}">▤ Source tables (3)</button></div>${state.nbTables ? `<div style="margin-bottom:10px">${catalogPanel()}</div>` : ""}${notebook()}`;
       const at = body.querySelector("#au-tables"); if (at) at.addEventListener("click", () => { state.nbTables = !state.nbTables; renderWork(); });
+      const ra = body.querySelector("#run-all"); if (ra) ra.addEventListener("click", () => toast(isSam ? "Running on Sam’s serverless compute — Grace’s quota is untouched" : "Running on serverless"));
     }
+    wire(body);
     body.querySelectorAll("[data-sub]").forEach(b => b.addEventListener("click", () => { state.subtab = b.dataset.sub; renderWork(); }));
     body.querySelectorAll("[data-ds]").forEach(b => b.addEventListener("click", () => { state.ds = +b.dataset.ds; renderWork(); }));
     wireCatalog(body, renderWork);
@@ -702,61 +768,55 @@ ORDER BY 2 DESC`,
   function setMode() { document.getElementById("pub-hint").textContent = "You can update or revoke the snapshot any time from Published."; document.getElementById("pub-hint").style.color = ""; }
   function openPublish(snapshot) {
     const a = ASSETS[state.asset];
-    state.hidden = false; state.acknowledged = false;
     setMode();
-    document.getElementById("pub-title").value = a.kind === "dashboard" ? "Bay Wheels rides — demand by hour and neighborhood" : "Bay Wheels demand by hour and neighborhood";
-    document.getElementById("code-opt").hidden = a.kind !== "notebook";
-    // what's included — generated from what the asset actually contains
+    document.getElementById("code-opt").hidden = true;
+    // what to share — the project's items, each with its own options
+    state.fixed = { pii: false, secret: false }; state.kept = { pii: false, secret: false };
     const incl = document.getElementById("incl");
     const tblRows = TABLES.map((t, i) => `<div class="ir sub"><label><input type="checkbox" class="inc-tbl" data-i="${i}" checked> <code>${t.name}</code></label><span class="cnt">${t.rows} rows · ${t.size}${t.pii ? " · contains personal data" : ""}</span></div>`).join("");
-    const dataSel = (id, opts) => `<select class="in" id="${id}">${opts.map(o => `<option value="${o[0]}"${o[2] ? " selected" : ""}>${o[1]}</option>`).join("")}</select>`;
-    incl.innerHTML = a.kind === "dashboard" ? `
-      <div class="ir"><label><input type="checkbox" id="inc-page" checked> Page 1</label><span class="cnt">4 visualizations · 1 global filter</span></div>
-      <div class="ir"><label><input type="checkbox" id="inc-sql" checked> Queries</label><span class="cnt">2 datasets · hourly_rides, neighborhood_rides</span></div>
-      <div class="ir"><label><input type="checkbox" id="inc-results" checked> Query results</label><span class="cnt">29 rows</span>${dataSel("inc-data", [["full", "All rows", true], ["preview", "First 100 rows"], ["schema", "Columns only"]])}</div>
-      <div class="ir"><label><input type="checkbox" id="inc-tables" checked> Source tables</label><span class="cnt">3 tables · 38.4 MB</span><span class="r">same rows setting as results</span></div>
+    incl.innerHTML = `
+      <div class="ir"><label><input type="checkbox" id="inc-dash" ${a.kind === "dashboard" || state.cloned ? "checked" : "checked"}> <span class="ico dash" aria-hidden="true"></span> Bay Wheels Rides <span class="cnt">dashboard · 4 visualizations, 1 global filter</span></label></div>
+      <div class="ir sub" data-under="inc-dash"><label><input type="checkbox" id="inc-sql" checked> Queries</label><span class="cnt">2 datasets · hourly_rides, neighborhood_rides</span></div>
+      <div class="ir sub" data-under="inc-dash"><label><input type="checkbox" id="inc-results" checked> Query results</label><span class="cnt">29 rows</span></div>
+      <div class="ir"><label><input type="checkbox" id="inc-nb" checked> <span class="ico nb" aria-hidden="true"></span> baywheels_analysis <span class="cnt">notebook · 6 cells, 4 outputs, 1 chart</span></label></div>
+      <div class="ir sub" data-under="inc-nb"><label><input type="checkbox" id="inc-code" checked> Code</label><span class="cnt">SQL and Python in every cell · viewers can toggle</span></div>
+      <div class="ir"><label><input type="checkbox" id="inc-tables" checked> Source tables <span class="cnt">3 tables · 38.4 MB</span></label><select class="in" id="inc-data"><option value="full" selected>All rows</option><option value="preview">First 100 rows</option><option value="schema">Columns only</option></select></div>
       ${tblRows}
-      <div class="help">Included by default: Free Edition is for personal, non-commercial work, and a viewer can’t run the queries without the data. Untick anything that isn’t yours to share.</div>
-      <div class="ir"><label><input type="checkbox" id="inc-csv" checked> Let viewers download results and tables as CSV</label></div>`
-    : `
-      <div class="ir"><label><input type="checkbox" id="inc-page" checked> Cells and outputs</label><span class="cnt">6 cells · 4 outputs · 1 chart</span></div>
-      <div class="ir"><label><input type="checkbox" id="inc-sql" checked> Code</label><span class="cnt">SQL and Python in every cell · viewers can toggle</span></div>
-      <div class="ir"><label><input type="checkbox" id="inc-results" checked hidden> </label></div>
-      <div class="ir"><label><input type="checkbox" id="inc-tables" checked> Tables the notebook reads</label><span class="cnt">3 tables · 38.4 MB</span>${dataSel("inc-data", [["preview", "First 100 rows", true], ["full", "All rows"], ["schema", "Columns only"]])}</div>
-      ${tblRows}
-      <div class="help">Included so a viewer can open a copy and actually run it. Untick a table if the data isn’t yours to share.</div>
-      <div class="ir"><label><input type="checkbox" id="inc-csv" checked> Let viewers download the notebook (.ipynb)</label></div>`;
-    // hide the empty placeholder row in the notebook variant
-    const ph = incl.querySelector('#inc-results[hidden]'); if (ph) ph.closest(".ir").style.display = "none";
-    // parent/child table checkboxes
+      <div class="help">Included by default: Free Edition is for personal, non-commercial work, and a viewer can’t run anything without the data. Untick what isn’t yours to share.</div>
+      <div class="ir"><label><input type="checkbox" id="inc-csv" checked> Let viewers download (CSV for tables, .ipynb for the notebook)</label></div>`;
+    // parent/child behaviour
+    const link = (parent, kids) => { const P = incl.querySelector("#" + parent); const K = incl.querySelectorAll(kids); P.addEventListener("change", () => K.forEach(k => { k.disabled = !P.checked; k.closest(".ir").style.opacity = P.checked ? "" : ".5"; })); };
+    link("inc-dash", '[data-under="inc-dash"] input'); link("inc-nb", '[data-under="inc-nb"] input');
     const tblBoxes = [...incl.querySelectorAll(".inc-tbl")], tblAll = incl.querySelector("#inc-tables");
     tblAll.addEventListener("change", () => tblBoxes.forEach(b => b.checked = tblAll.checked));
     tblBoxes.forEach(b => b.addEventListener("change", () => { tblAll.checked = tblBoxes.some(x => x.checked); tblAll.indeterminate = tblAll.checked && !tblBoxes.every(x => x.checked); }));
-    // scan
+    // Genie check — one row per finding, findings depend on what's selected
     const scan = document.getElementById("scan");
-    scan.className = "scan";
     const genieIcon = `<span class="gi" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.6 3.9L13.5 6.5l-3.9 1.6L8 12l-1.6-3.9L2.5 6.5l3.9-1.6z"/></svg></span>`;
-    scan.innerHTML = `<div class="h">${genieIcon}<strong>Genie checked this snapshot</strong><span class="sub">· ${a.kind === "dashboard" ? "2 datasets, 3 source tables, 4 visualizations" : "6 cells, 4 outputs, 3 source tables"} · just now</span><button type="button" class="re" id="re-check">Check again</button></div>
-      <div class="summary" id="scan-summary">One thing to look at before this goes public:</div>
-      ${a.facts.map(f => `<div class="row"><span class="ic ok" aria-label="OK">✓</span><span class="t">${f}</span></div>`).join("")}
-      <div class="row" id="flag-row"><span class="ic warn" aria-label="Warning">!</span><span class="t">${a.flag.text}</span>
-        <span class="acts"><button type="button" class="btn sm" id="hide-fix">${a.flag.fix}</button><button type="button" class="btn sm" id="keep-fix">Keep it</button></span></div>
-      <div class="row"><span class="ic ok" aria-label="OK">✓</span><span class="t">${a.kind === "dashboard" ? "No credentials or secrets in outputs" : "No personal data in table previews"}</span></div>`;
-    document.getElementById("hide-fix").addEventListener("click", () => {
-      state.hidden = true; state.acknowledged = false;
-      const row = document.getElementById("flag-row");
-      row.innerHTML = `<span class="ic ok" aria-label="OK">✓</span><span class="t">${a.flag.done}</span>`;
-      document.getElementById("scan-summary").textContent = "Nothing left to look at — this is ready to publish.";
-      toast(a.kind === "dashboard" ? "riders column dropped from the snapshot" : "Cell 5 output hidden");
-    });
-    document.getElementById("re-check").addEventListener("click", () => { toast("Genie re-checked the snapshot — no new findings"); });
-    document.getElementById("keep-fix").addEventListener("click", () => {
-      state.acknowledged = true; state.hidden = false;
-      document.getElementById("scan-summary").textContent = "You chose to keep the flagged item — it will be included.";
-      const row = document.getElementById("flag-row");
-      row.innerHTML = `<span class="ic warn" aria-label="Warning">!</span><span class="t">${a.flag.text} <span class="kept">— kept; you confirmed it’s fine to share</span></span><span class="acts"><button type="button" class="btn sm" id="hide-fix">${a.flag.fix}</button></span>`;
-      document.getElementById("hide-fix").addEventListener("click", () => { state.hidden = true; state.acknowledged = false; row.innerHTML = `<span class="ic ok" aria-label="OK">✓</span><span class="t">${a.flag.done}</span>`; document.getElementById("scan-summary").textContent = "Nothing left to look at — this is ready to publish."; toast(a.kind === "dashboard" ? "riders column dropped from the snapshot" : "Cell 5 output hidden"); });
-    });
+    const FL = {
+      pii: { text: "Personal data: the <code>riders</code> column is computed from <code>rider_survey.rider_email</code>", fix: "Drop column", done: "<code>riders</code> column dropped from the snapshot" },
+      secret: { text: "Secret: notebook cell 5 prints what looks like an API token (<code>app_token 4f8a…</code>)", fix: "Hide output", done: "Cell 5 output hidden from the snapshot" },
+    };
+    function renderScan() {
+      const d = incl.querySelector("#inc-dash").checked, n = incl.querySelector("#inc-nb").checked;
+      const anyT = tblBoxes.some(x => x.checked);
+      const findings = []; if (d) findings.push("pii"); if (n) findings.push("secret");
+      const open = findings.filter(f => !state.fixed[f] && !state.kept[f]).length;
+      const row = f => state.fixed[f] ? `<div class="row" data-f="${f}"><span class="ic ok" aria-label="OK">✓</span><span class="t">${FL[f].done}</span></div>`
+        : `<div class="row" data-f="${f}"><span class="ic warn" aria-label="Warning">!</span><span class="t">${FL[f].text}${state.kept[f] ? ' <span class="kept">— kept; you confirmed it’s fine to share</span>' : ""}</span><span class="acts"><button type="button" class="btn sm" data-fix="${f}">${FL[f].fix}</button>${state.kept[f] ? "" : `<button type="button" class="btn sm" data-keep="${f}">Keep it</button>`}</span></div>`;
+      scan.innerHTML = `<div class="h">${genieIcon}<strong>Genie checked what you selected</strong><span class="sub">· ${[d ? "dashboard" : "", n ? "notebook" : "", anyT ? `${tblBoxes.filter(x => x.checked).length} tables` : ""].filter(Boolean).join(", ") || "nothing selected"} · just now</span><button type="button" class="re" id="re-check">Check again</button></div>
+        <div class="summary" id="scan-summary">${open === 0 ? "Nothing left to look at — ready to publish." : open === 1 ? "One thing to look at before this goes public:" : `${open} things to look at before this goes public:`}</div>
+        ${d ? `<div class="row"><span class="ic ok" aria-label="OK">✓</span><span class="t">Dashboard: 4 visualizations, 2 datasets (29 result rows)</span></div>` : ""}
+        ${n ? `<div class="row"><span class="ic ok" aria-label="OK">✓</span><span class="t">Notebook: 6 cells, 4 outputs</span></div>` : ""}
+        ${findings.map(row).join("")}
+        ${anyT ? `<div class="row"><span class="ic ok" aria-label="OK">✓</span><span class="t">Tables: no other personal data in previews</span></div>` : ""}`;
+      scan.querySelectorAll("[data-fix]").forEach(b => b.addEventListener("click", () => { state.fixed[b.dataset.fix] = true; state.kept[b.dataset.fix] = false; renderScan(); toast(b.dataset.fix === "pii" ? "riders column dropped from the snapshot" : "Cell 5 output hidden"); }));
+      scan.querySelectorAll("[data-keep]").forEach(b => b.addEventListener("click", () => { state.kept[b.dataset.keep] = true; renderScan(); }));
+      const rc = scan.querySelector("#re-check"); if (rc) rc.addEventListener("click", () => toast("Genie re-checked — no new findings"));
+    }
+    incl.querySelectorAll("input").forEach(i => i.addEventListener("change", renderScan));
+    renderScan();
+    document.getElementById("pub-title").value = "Bay Wheels rides — demand by hour and neighborhood";
     // audience default
     document.querySelector('input[name="aud"][value="link"]').checked = true;
     document.getElementById("chips").hidden = true;
@@ -782,77 +842,82 @@ ORDER BY 2 DESC`,
   // submit
   document.getElementById("publish-form").addEventListener("submit", e => {
     e.preventDefault();
-    const a = ASSETS[state.asset];
     const hint = document.getElementById("pub-hint");
-    if (!state.hidden && !state.acknowledged) { hint.textContent = a.kind === "dashboard" ? "Resolve the flagged item first — drop the column, or choose Keep it." : "Resolve the flagged item first — hide the output, or choose Keep it."; hint.style.color = "var(--amber)"; const kf = document.getElementById("keep-fix"); if (kf) kf.focus(); return; }
-    const anyTbl = [...document.querySelectorAll(".inc-tbl")].some(b => b.checked);
-    if (!document.getElementById("inc-page").checked && !document.getElementById("inc-sql").checked && !anyTbl) { hint.textContent = "Include at least one thing — otherwise there’s nothing to publish."; hint.style.color = "var(--amber)"; document.getElementById("inc-page").focus(); return; }
+    const g = id => document.getElementById(id).checked;
+    const incDash = g("inc-dash"), incNb = g("inc-nb"), tables = [...document.querySelectorAll(".inc-tbl")].map(b => b.checked);
+    if (!incDash && !incNb && !tables.some(Boolean)) { hint.textContent = "Select at least one thing to share."; hint.style.color = "var(--amber)"; document.getElementById("inc-dash").focus(); return; }
+    const need = []; if (incDash && !state.fixed.pii && !state.kept.pii) need.push("pii"); if (incNb && !state.fixed.secret && !state.kept.secret) need.push("secret");
+    if (need.length) { hint.textContent = "Resolve Genie’s findings first — fix each one, or choose Keep it."; hint.style.color = "var(--amber)"; const kf = document.querySelector("#scan [data-keep]"); if (kf) kf.focus(); return; }
     const aud = document.querySelector('input[name="aud"]:checked').value;
     const emails = [...chips.querySelectorAll(".chip")].map(c => c.firstChild.textContent.trim());
     if (aud === "people" && !emails.length) { hint.textContent = "Add at least one email, or choose “Anyone with the link.”"; hint.style.color = "var(--amber)"; chipInput.focus(); return; }
-    const snap = { id: Math.random().toString(36).slice(2, 8), kind: a.kind,
+    const snap = { id: Math.random().toString(36).slice(2, 8), owner: "grace",
+      kind: incDash && incNb ? "project" : incDash ? "dashboard" : incNb ? "notebook" : "tables",
+      incDash, incNb, incSql: incDash && g("inc-sql"), incResults: incDash && g("inc-results"), incCode: incNb && g("inc-code"),
+      tables, dataMode: document.getElementById("inc-data").value, csv: g("inc-csv"),
+      hiddenPii: state.fixed.pii, hiddenSecret: state.fixed.secret,
       title: document.getElementById("pub-title").value || "Untitled", desc: document.getElementById("pub-desc").value,
-      aud, emails, expiry: document.getElementById("expiry").value,
-      showName: document.getElementById("show-name").checked, showCode: document.getElementById("show-code").checked,
-      incPage: document.getElementById("inc-page").checked, incSql: document.getElementById("inc-sql").checked,
-      incResults: document.getElementById("inc-results").checked, dataMode: document.getElementById("inc-data").value,
-      tables: [...document.querySelectorAll(".inc-tbl")].map(b => b.checked), csv: document.getElementById("inc-csv").checked,
-      hidden: state.hidden, created: new Date(), updated: null, views: 0, revoked: false };
+      aud, emails, expiry: document.getElementById("expiry").value, showName: document.getElementById("show-name").checked,
+      created: new Date(), updated: null, views: 0, revoked: false };
     state.snapshots.unshift(snap); state.current = snap;
     closeDialog("publish-scrim");
-    document.getElementById("done-link").textContent = linkFor(snap);
+    document.getElementById("done-link").innerHTML = `<a href="${linkFor(snap)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">${shortLink(snap)}</a> <span style="color:var(--faint)">— real link, opens in a new tab</span>`;
+    document.getElementById("done-link").dataset.href = linkFor(snap);
+    persist();
     document.getElementById("done-sub").innerHTML = (aud === "people" ? `Sent to <strong>${esc(emails.join(", "))}</strong>. ` : `<strong>Anyone with the link</strong> can open it. `) + `Included: ${describeIncl(snap)}.`;
     renderWork(); openDialog("done-scrim"); setStep("publish");
   });
   function describeIncl(s) {
     const parts = [];
-    if (s.incPage) parts.push(s.kind === "dashboard" ? "page" : "cells and outputs");
-    if (s.incSql) parts.push(s.kind === "dashboard" ? "queries" : "code");
-    if (s.kind === "dashboard" && s.incResults) parts.push({ full: "results", preview: "results (preview)", schema: "result columns" }[s.dataMode]);
+    if (s.incDash) parts.push("dashboard" + (s.incSql || s.incResults ? ` (${[s.incSql ? "queries" : "", s.incResults ? "results" : ""].filter(Boolean).join(", ")})` : ""));
+    if (s.incNb) parts.push("notebook" + (s.incCode ? " (with code)" : " (outputs only)"));
     const n = (s.tables || []).filter(Boolean).length;
     if (n) parts.push(`${n} table${n > 1 ? "s" : ""} (${{ full: "all rows", preview: "preview", schema: "columns only" }[s.dataMode]})`);
     return parts.join(", ") || "nothing";
   }
-  function linkFor(s) { return `https://share.databricks.example/${s.kind === "notebook" ? "n" : "d"}/${s.id}`; }
-  document.getElementById("copy-link").addEventListener("click", () => { const t = document.getElementById("done-link").textContent; if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => toast("Link copied"), () => toast("Copied (prototype)")); else toast("Copied (prototype)"); });
+  function baseUrl() { return location.origin && location.origin !== "null" ? location.origin + location.pathname : location.href.split("?")[0].split("#")[0]; }
+  function packSnap(s) { const o = { ...s, created: s.created && s.created.toISOString ? s.created.toISOString() : s.created, updated: s.updated && s.updated.toISOString ? s.updated.toISOString() : s.updated }; delete o.views; delete o.gateOpened; delete o.vtab; delete o.nbTables; return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+  function unpackSnap(v) { try { const j = JSON.parse(decodeURIComponent(escape(atob(v.replace(/-/g, "+").replace(/_/g, "/"))))); j.created = new Date(j.created); j.updated = j.updated ? new Date(j.updated) : null; j.views = 0; return j; } catch (e) { return null; } }
+  function linkFor(s) { return `${baseUrl()}?v=${packSnap(s)}`; }
+  function shortLink(s) { return `share.databricks.example/p/${s.id}`; }
+  function persist() { try { localStorage.setItem("fe-proto-snapshots", JSON.stringify(state.snapshots.map(x => ({ ...x, created: x.created.toISOString(), updated: x.updated ? x.updated.toISOString() : null })))); } catch (e) {} }
+  function restore() { try { const raw = localStorage.getItem("fe-proto-snapshots"); if (!raw) return; state.snapshots = JSON.parse(raw).map(x => ({ ...x, created: new Date(x.created), updated: x.updated ? new Date(x.updated) : null })); } catch (e) {} }
+  function revokedIds() { try { return JSON.parse(localStorage.getItem("fe-proto-revoked") || "[]"); } catch (e) { return []; } }
+  document.getElementById("copy-link").addEventListener("click", () => { const t = document.getElementById("done-link").dataset.href || document.getElementById("done-link").textContent; if (navigator.clipboard) navigator.clipboard.writeText(t).then(() => toast("Link copied"), () => toast("Copied (prototype)")); else toast("Copied (prototype)"); });
 
   // ---------- viewer ----------
   function renderViewer() {
     const body = document.getElementById("viewer-body"), url = document.getElementById("viewer-url"), s = state.current;
     if (!s) { url.textContent = "share.databricks.example/…"; body.innerHTML = `<div class="gone"><h2>No snapshot yet</h2>Go back to your work, click <strong>Publish</strong> and choose the snapshot option — then come back here to see it signed out.<br><br><button type="button" class="btn primary" data-go="publish">Publish a snapshot</button></div>`; wire(body); return; }
-    url.textContent = linkFor(s);
-    if (s.revoked) { body.innerHTML = `<div class="gone"><h2>This snapshot is no longer available</h2>The author revoked it. Ask them for a new link.</div>`; return; }
+    url.textContent = shortLink(s);
+    document.getElementById("viewer-tabtitle").textContent = s.title + " · Databricks";
+    if (s.revoked || revokedIds().includes(s.id)) { body.innerHTML = `<div class="gone"><h2>This snapshot is no longer available</h2>The author revoked it. Ask them for a new link.</div>`; return; }
     if (s.aud === "people" && !s.gateOpened) {
       body.innerHTML = `<div class="gate"><h2>Open “${esc(s.title)}”</h2><p>This snapshot was shared with specific people. Confirm the email it was sent to and we’ll send a one-time link — no account needed.</p>
         <div class="field" style="text-align:left"><label for="gate-email">Your email</label><input class="in" type="text" id="gate-email" value="${esc(s.emails[0] || "")}"></div><button type="button" class="btn primary" id="gate-go">Continue</button></div>`;
       body.querySelector("#gate-go").addEventListener("click", () => { s.gateOpened = true; renderViewer(); }); return;
     }
-    s.views += 1; s.vtab = s.vtab || (s.incPage ? "page" : (s.incSql || s.incResults ? "data" : "tables"));
-    const a = ASSETS[s.kind], isNb = s.kind === "notebook";
+    s.views += 1;
+    const tabs = []; if (s.incDash) tabs.push(["dash", "Dashboard"]); if (s.incNb) tabs.push(["nb", "Notebook"]); if (s.incSql || s.incResults) tabs.push(["data", "▤ Data"]);
+    const nT = (s.tables || []).filter(Boolean).length; if (nT) tabs.push(["tables", `Source tables (${nT})`]);
+    if (!s.vtab || !tabs.some(t => t[0] === s.vtab)) s.vtab = tabs.length ? tabs[0][0] : "dash";
     const date = s.created.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
-    let main;
-    if (isNb) {
-      main = `<div class="nbbar"><button type="button" class="btn sm" id="toggle-code" aria-pressed="${s.showCode && s.incSql}">${s.showCode && s.incSql ? "Hide code" : "Show code"}</button>
-        ${(s.tables || []).some(Boolean) ? `<button type="button" class="btn sm" id="nb-data" aria-pressed="${!!s.nbTables}">▤ Source tables (${(s.tables || []).filter(Boolean).length})</button>` : ""}<span class="draft">6 cells · outputs as last run · nothing re-runs</span></div>
-        <div id="nb-data-panel" ${s.nbTables ? "" : "hidden"} style="margin-bottom:10px">${catalogPanel({ viewer: true, dataMode: s.dataMode, dropPii: s.hidden, tables: s.tables })}</div>
-        <div id="viewer-content" class="${s.showCode && s.incSql ? "" : "codehidden"}">${notebook({ hideSecret: s.hidden, viewer: true })}</div>`;
-    } else {
-      const showData = s.incSql || s.incResults;
-      const nT = (s.tables || []).filter(Boolean).length; const showTables = nT > 0;
-      main = `<div class="subtabs" role="tablist"><button type="button" role="tab" aria-selected="${s.vtab === "page"}" data-vtab="page">Page 1</button>${showData ? `<span class="sep"></span><button type="button" role="tab" aria-selected="${s.vtab === "data"}" data-vtab="data">▤ Data</button>` : ""}${showTables ? `<button type="button" role="tab" aria-selected="${s.vtab === "tables"}" data-vtab="tables">Source tables (${nT})</button>` : ""}<span style="flex:1"></span><span class="draft">frozen at publish time · filters disabled</span></div>
-        ${s.vtab === "page" ? (s.incPage ? dashboardPage(false) : `<div class="empty">The author didn’t include the page — see the Data tab.</div>`) : s.vtab === "data" ? dataTab({ viewer: true, dropPii: s.hidden, dataMode: s.incResults ? s.dataMode : "hide", csv: s.csv, sql: s.incSql }) : catalogPanel({ viewer: true, dataMode: s.dataMode, dropPii: s.hidden, tables: s.tables })}`;
-    }
+    let content = "";
+    if (s.vtab === "dash") content = dashboardPage(false);
+    else if (s.vtab === "nb") content = `<div class="nbbar"><button type="button" class="btn sm" id="toggle-code" aria-pressed="${!!s.incCode}" ${s.incCode ? "" : "disabled title='The author did not include the code'"}>${(s.showCodeNow ?? s.incCode) ? "Hide code" : "Show code"}</button><span class="draft">6 cells · outputs as last run · nothing re-runs</span></div><div id="viewer-content" class="${(s.showCodeNow ?? s.incCode) ? "" : "codehidden"}">${notebook({ hideSecret: s.hiddenSecret, viewer: true })}</div>`;
+    else if (s.vtab === "data") content = dataTab({ viewer: true, dropPii: s.hiddenPii, dataMode: s.incResults ? s.dataMode : "hide", csv: s.csv, sql: s.incSql });
+    else content = catalogPanel({ viewer: true, dataMode: s.dataMode, dropPii: s.hiddenPii, tables: s.tables });
+    const main = `<div class="subtabs" role="tablist">${tabs.map((t, i) => `${i === 1 && tabs[0][0] === "dash" && t[0] !== "nb" ? '<span class="sep"></span>' : ""}<button type="button" role="tab" aria-selected="${s.vtab === t[0]}" data-vtab="${t[0]}">${t[1]}</button>`).join("")}<span style="flex:1"></span><span class="draft">frozen at publish time · nothing re-runs</span></div>${content}`;
     body.innerHTML = `
-      <div class="vhead"><div><h2>${esc(s.title)}</h2><div class="vmeta">${s.showName ? "Grace L. · " : ""}Published ${date} · Snapshot · Expires ${expiryDate(s)}${s.updated ? " · Updated " + s.updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}${s.hidden ? " · " + a.flag.note : ""}</div>${s.desc ? `<div class="vdesc">${esc(s.desc)}</div>` : ""}</div>
-        <div class="actions">${isNb && s.csv ? `<button type="button" class="btn sm">Download .ipynb</button>` : ""}<button type="button" class="btn sm primary">${isNb ? "Open a copy in your workspace" : "Open a copy in your workspace"}</button></div></div>
+      <div class="vhead"><div><h2>${esc(s.title)}</h2><div class="vmeta">${s.showName ? "Grace L. · " : ""}Published ${date} · Snapshot · Expires ${expiryDate(s)}${s.updated ? " · Updated " + s.updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}${s.hiddenPii ? " · 1 column removed by the author" : ""}${s.hiddenSecret ? " · 1 cell output hidden by the author" : ""}</div>${s.desc ? `<div class="vdesc">${esc(s.desc)}</div>` : ""}</div>
+        <div class="actions">${s.csv && s.incNb ? `<button type="button" class="btn sm">Download .ipynb</button>` : ""}<button type="button" class="btn sm primary" id="open-copy">Open a copy in your workspace</button></div></div>
       <div class="vbody">${main}</div>
       <div class="vfoot"><span class="brand"><span class="mark" aria-hidden="true"></span>Made with Databricks Free Edition</span><span>Free for students, educators and hobbyists.</span><span class="right"><a href="#" onclick="return false">Report this page</a>${s.aud === "link" ? ` · <a href="#" onclick="return false">Try it yourself — it’s free</a>` : ` · Shared privately with ${esc(s.emails.join(", "))}`}</span></div>`;
     body.querySelectorAll("[data-vtab]").forEach(b => b.addEventListener("click", () => { s.vtab = b.dataset.vtab; s.views -= 1; renderViewer(); }));
     body.querySelectorAll("[data-ds]").forEach(b => b.addEventListener("click", () => { state.ds = +b.dataset.ds; s.views -= 1; renderViewer(); }));
     const tc = body.querySelector("#toggle-code");
-    if (tc) tc.addEventListener("click", () => { const vc = body.querySelector("#viewer-content"); const hid = vc.classList.toggle("codehidden"); tc.textContent = hid ? "Show code" : "Hide code"; tc.setAttribute("aria-pressed", String(!hid)); });
-    const nd = body.querySelector("#nb-data");
-    if (nd) nd.addEventListener("click", () => { s.nbTables = !s.nbTables; s.views -= 1; renderViewer(); });
+    if (tc) tc.addEventListener("click", () => { const vc = body.querySelector("#viewer-content"); const hid = vc.classList.toggle("codehidden"); s.showCodeNow = !hid; tc.textContent = hid ? "Show code" : "Hide code"; tc.setAttribute("aria-pressed", String(!hid)); });
+    const oc = body.querySelector("#open-copy"); if (oc) oc.addEventListener("click", openCopyFlow);
     wireCatalog(body, () => { s.views -= 1; renderViewer(); });
   }
   function expiryDate(s) { const d = new Date(s.created); const m = { "1 week": 0, "1 month": 1, "6 months": 6, "1 year": 12 }[s.expiry]; if (m === 0) d.setDate(d.getDate() + 7); else d.setMonth(d.getMonth() + m); return d.toLocaleDateString(undefined, { month: "short", year: "numeric" }); }
@@ -876,7 +941,8 @@ ORDER BY 2 DESC`,
       if (act === "update") { s.updated = new Date(); toast("Snapshot updated to the current draft"); renderManage(); }
       if (act === "revoke") tr.querySelector("[data-confirm]").dataset.open = "true";
       if (act === "revoke-no") tr.querySelector("[data-confirm]").dataset.open = "false";
-      if (act === "revoke-yes") { s.revoked = true; toast("Link revoked"); renderManage(); renderWork(); }
+      if (act === "revoke-yes") { s.revoked = true; try { localStorage.setItem("fe-proto-revoked", JSON.stringify([...revokedIds(), s.id])); } catch (e) {} persist(); toast("Link revoked"); renderManage(); renderWork(); }
+      if (act === "update") persist();
     }));
   }
   function wire(root) { root.querySelectorAll("[data-go]").forEach(el => el.addEventListener("click", e => { e.preventDefault(); go(el.dataset.go); })); }
@@ -886,9 +952,9 @@ ORDER BY 2 DESC`,
   const TOUR = [
     { center: true, text: "<strong>Prototype — a proposed Free Edition feature, not a Databricks product.</strong><br>Example data: Bay Wheels rides in San Francisco. Five quick steps, or skip and click around on your own." },
     { target: "#publish-scrim .hd", enter: () => { closeAll(); show("work"); openPublish(true); }, text: "<strong>The proposal.</strong> A Publish button on dashboards and notebooks that creates a read-only snapshot at a link that works without a Databricks account. Nothing re-runs, and nothing outside the snapshot is reachable." },
-    { target: "#incl", enter: () => { ensurePublish(); }, text: "<strong>What goes in.</strong> Queries, results and the source tables are included by default — like a Kaggle notebook — because Free Edition is non-commercial. The author can dial down to a preview, schema only, or nothing." },
-    { target: "#scan", enter: () => { ensurePublish(); }, text: "<strong>Genie checks it first.</strong> Before anything goes public, Genie scans the queries, outputs and tables for personal data and secrets — here, a column computed from <code>rider_email</code>. Drop it or keep it deliberately; Next drops it and publishes." },
-    { target: "#viewer-who", enter: () => { if (!state.current || state.current.revoked) { ensurePublish(); if (!state.hidden) document.getElementById("hide-fix").click(); document.getElementById("publish-form").requestSubmit(); } closeAll(); if (state.current) { state.current.gateOpened = true; state.current.vtab = "data"; } show("viewer"); }, text: "<strong>The viewer.</strong> Your workspace disappears — this is the visitor’s browser. Not signed in, no compute running. The Data tab carries the SQL and frozen results; Source tables shows the raw data the way Catalog Explorer does. “Open a copy in your workspace” is where new users come from." },
+    { target: "#incl", enter: () => { ensurePublish(); }, text: "<strong>What to share.</strong> Pick the pieces of the project — dashboard, notebook, source tables — and what goes with each. Everything is on by default, like a Kaggle notebook, because Free Edition is non-commercial; untick what isn’t yours to share." },
+    { target: "#scan", enter: () => { ensurePublish(); }, text: "<strong>Genie checks it first.</strong> Before anything goes public, Genie scans what you selected for personal data and secrets — here a column computed from <code>rider_email</code> and a printed API token. Fix each or keep it deliberately; Next fixes both and publishes." },
+    { target: "#viewer-who", enter: () => { if (!state.current || state.current.revoked) { ensurePublish(); document.querySelectorAll("#scan [data-fix]").forEach(b => b.click()); document.getElementById("publish-form").requestSubmit(); } closeAll(); if (state.current) { state.current.gateOpened = true; state.current.vtab = "dash"; } show("viewer"); }, text: "<strong>The viewer.</strong> Your workspace disappears — this is the visitor’s browser. Not signed in, no compute running. Tabs for each piece you shared — dashboard, notebook, queries and results, source tables. “Open a copy in your workspace” asks the visitor to sign in to their <em>own</em> Free Edition — that’s where new users come from." },
     { target: "#manage-body table", enter: () => { closeAll(); show("manage"); }, text: "<strong>Control.</strong> Every snapshot in one place — what was included, who can open it, how many did — with Update and Revoke. Registered in Unity Catalog with lineage, and logged." },
     { center: true, text: "That’s it. Explore freely — try the notebook tab, publish with other options, revoke a link and reopen it as a viewer. The <strong>?</strong> button restarts this tour." },
   ];
@@ -933,14 +999,53 @@ ORDER BY 2 DESC`,
   document.getElementById("tour-back").addEventListener("click", () => { if (tourIdx > 0) { tourIdx -= 1; runStep(); } });
   document.getElementById("tour-skip").addEventListener("click", endTour);
   document.getElementById("help-btn").addEventListener("click", () => { if (tourIdx >= 0) endTour(); toggleHelp(); });
+  const acctBtn = document.getElementById("avatar-btn"), acctMenu = document.getElementById("acctmenu");
+  acctBtn.addEventListener("click", e => { e.stopPropagation(); const open = acctMenu.hidden; acctMenu.hidden = !open; acctBtn.setAttribute("aria-expanded", String(open)); });
+  document.addEventListener("click", e => { if (!acctMenu.hidden && !acctMenu.contains(e.target)) { acctMenu.hidden = true; acctBtn.setAttribute("aria-expanded", "false"); } });
+  function switchUser(u) { state.user = u; state.subtab = "page"; acctMenu.hidden = true; renderWork(); show("work"); toast(`Now signed in as ${USERS[u].name}`); }
+  document.getElementById("switch-acct").addEventListener("click", () => switchUser("grace"));
+  document.getElementById("sambar-back").addEventListener("click", () => switchUser("grace"));
+  document.getElementById("proto-tag").addEventListener("click", () => startTour(0));
+  function openCopyFlow() {
+    const sn = state.current; if (!sn) return;
+    const n = (sn.tables || []).filter(Boolean).length;
+    document.getElementById("signin-what").textContent = `${[sn.incDash ? "the dashboard and its queries" : "", sn.incNb ? "the notebook" : "", n ? `${n} source table${n > 1 ? "s" : ""}` : ""].filter(Boolean).join(", ").replace(/^./, c => c.toUpperCase())}, copied into your workspace as workspace.default.* — ready to run or edit.`;
+    openDialog("signin-scrim");
+  }
+  document.getElementById("signin-go").addEventListener("click", () => {
+    closeDialog("signin-scrim");
+    const sn = state.current;
+    state.user = "sam"; state.cloned = { from: sn.id, at: new Date(), dash: !!sn.incDash, nb: !!sn.incNb }; state.asset = sn.incDash ? "dashboard" : "notebook"; state.subtab = "page";
+    renderWork(); show("work");
+    const n = (sn.tables || []).filter(Boolean).length;
+    toast(`Copied to Sam’s workspace: ${[sn.incDash ? "dashboard" : "", sn.incNb ? "notebook" : "", n ? `${n} table${n > 1 ? "s" : ""}` : ""].filter(Boolean).join(", ")} — on Sam’s own compute`);
+  });
+  document.getElementById("signin-create").addEventListener("click", () => toast("Demo: this would start Free Edition sign-up, then continue to the copy"));
   document.getElementById("helppop-x").addEventListener("click", () => toggleHelp(false));
   document.getElementById("replay-tour").addEventListener("click", () => { toggleHelp(false); startTour(0); });
   document.querySelectorAll("#flow [data-go]").forEach(el => el.addEventListener("click", e => { e.stopPropagation(); toggleHelp(false); go(el.dataset.go); }));
   window.addEventListener("resize", () => { if (tourIdx >= 0) place(); });
   window.addEventListener("scroll", () => { if (tourIdx >= 0) place(); }, true);
   document.addEventListener("keydown", e => { if (tourIdx < 0) return; if (e.key === "ArrowRight") document.getElementById("tour-next").click(); if (e.key === "ArrowLeft") document.getElementById("tour-back").click(); if (e.key === "Escape") endTour(); });
-  startTour(0);
-  setStep("work");
+  restore();
+  (function route() {
+    const v = new URLSearchParams(location.search).get("v");
+    if (v) {
+      const sn = unpackSnap(v);
+      if (sn) {
+        state.current = sn; if (!state.snapshots.some(x => x.id === sn.id)) state.snapshots.push(sn);
+        state.viaLink = true;
+        show("viewer");
+        const pb = document.querySelector(".previewbar .t");
+        pb.innerHTML = `<strong>Prototype</strong> <span>— you opened a snapshot link from a mockup of a proposed Databricks Free Edition feature. Nothing here is a real product.</span>`;
+        document.querySelector(".previewbar .acts").innerHTML = `<button type="button" class="btn sm primary" id="open-proto">Open the full prototype</button>`;
+        document.getElementById("open-proto").addEventListener("click", () => { history.replaceState(null, "", baseUrl()); state.viaLink = false; location.reload(); });
+        return;
+      }
+    }
+    startTour(0);
+    setStep("work");
+  })();
 
   // ---------- utils ----------
   let toastTimer;
@@ -948,3 +1053,4 @@ ORDER BY 2 DESC`,
   function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
 })();
 </script>
+</body></html>
