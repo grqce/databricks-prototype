@@ -35,51 +35,50 @@
   a { color: var(--blue); }
 
   /* ---------- guided tour ---------- */
-  .tour-hl { position: fixed; z-index: 40; border-radius: 6px; box-shadow: 0 0 0 9999px rgba(17,23,26,.45), 0 0 0 2px var(--blue); pointer-events: none; transition: top .2s, left .2s, width .2s, height .2s; }
-  .tour-hl.center { box-shadow: 0 0 0 9999px rgba(17,23,26,.45); }
-  .tour-card { position: fixed; z-index: 41; width: 320px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 10px 30px rgba(17,23,26,.25); padding: 12px 14px; }
-  .tour-card::before { content: ""; position: absolute; width: 10px; height: 10px; background: var(--bg); border-left: 1px solid var(--line); border-top: 1px solid var(--line); transform: rotate(45deg); left: 24px; top: -6px; }
-  .tour-card.above::before { top: auto; bottom: -6px; transform: rotate(225deg); }
-  .tour-card.center::before { display: none; }
-  .tour-card.center { width: 400px; }
-  .tour-step { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
-  .tour-text { color: var(--ink); margin-bottom: 10px; line-height: 1.5; }
-  .tour-text strong { font-weight: 600; }
-  .tour-btns { display: flex; gap: 6px; align-items: center; }
-  .tour-hl[hidden], .tour-card[hidden] { display: none; }
-  .helppop { position: fixed; right: 18px; bottom: 62px; width: 360px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 10px 30px rgba(17,23,26,.22); z-index: 16; }
-  .helppop[hidden] { display: none; }
-  .hp-hd { display: flex; align-items: center; padding: 10px 14px; border-bottom: 1px solid var(--line); }
-  .hp-hd .x { margin-left: auto; border: 0; background: transparent; font-size: 18px; color: var(--muted); padding: 0 4px; }
-  .flow { list-style: none; margin: 0; padding: 10px 14px 4px; position: relative; }
-  .flow li { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 6px 0 10px; position: relative; }
-  .flow li::before { content: ""; position: absolute; left: 10px; top: 28px; bottom: -2px; width: 1px; background: var(--line); }
-  .flow li:last-child::before { display: none; }
-  .flow .n { width: 22px; height: 22px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); display: grid; place-items: center; font-size: 11px; font-weight: 600; color: var(--muted); position: relative; z-index: 1; }
-  .flow li[aria-current="step"] .n { background: var(--blue); border-color: var(--blue); color: #fff; }
-  .flow .lnk { border: 0; background: transparent; padding: 0; font-weight: 600; color: var(--ink); text-align: left; }
-  .flow .lnk:hover { color: var(--blue); }
-  .flow li[aria-current="step"] .lnk { color: var(--blue); }
-  .flow .d { color: var(--muted); font-size: 12px; margin-top: 2px; }
-  .hp-ft { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--line); }
-  .hp-ft .draft { margin-left: auto; font-size: 11px; text-align: right; }
-  .hp-ft .btn { white-space: nowrap; }
-  .help { position: fixed; right: 18px; bottom: 18px; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); color: var(--ink-2); font-weight: 600; box-shadow: 0 2px 8px rgba(17,23,26,.15); z-index: 15; }
-  .help:hover { background: var(--bg-2); }
-  .help[aria-expanded="true"] { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .tour-hl { position: fixed; z-index: 40; border-radius: 6px; box-shadow: 0 0 0 2px var(--blue), 0 0 0 6px rgba(34,90,160,.18); pointer-events: none; transition: top .2s, left .2s, width .2s, height .2s; }
+  .tour-hl[hidden] { display: none; }
+  /* Guide panel: stays open, never blocks the page */
+  .guide { position: fixed; right: 16px; bottom: 52px; width: 300px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 10px 30px rgba(17,23,26,.18); z-index: 41; font-size: 12.5px; }
+  .guide[hidden] { display: none; }
+  .guide.left { right: auto; left: 16px; }
+  .g-hd { display: flex; align-items: center; gap: 8px; padding: 9px 12px; border-bottom: 1px solid var(--line-2); }
+  .g-hd strong { font-size: 12.5px; }
+  .g-hd .step { color: var(--muted); font-size: 11px; }
+  .g-hd .x { margin-left: auto; border: 0; background: transparent; font-size: 17px; line-height: 1; color: var(--muted); padding: 0 2px; cursor: pointer; }
+  .g-list { list-style: none; margin: 0; padding: 6px 8px; display: grid; gap: 1px; }
+  .g-list li { display: grid; grid-template-columns: 18px 1fr; align-items: start; gap: 8px; padding: 5px 6px; border-radius: 4px; cursor: pointer; color: var(--ink-2); }
+  .g-list li:hover { background: var(--bg-2); }
+  .g-list li .n { margin-top: 1px; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--line); display: grid; place-items: center; font-size: 10px; font-weight: 600; color: var(--muted); }
+  .g-list li .l { display: block; font-weight: 500; }
+  .g-list li .d { display: block; font-size: 11px; color: var(--muted); margin-top: 1px; }
+  .g-list li[aria-current="step"] { background: var(--bg-2); }
+  .g-list li[aria-current="step"] .l { color: var(--blue); font-weight: 600; }
+  .g-list li[aria-current="step"] .n { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .g-list li.done .n { border-color: var(--green); color: var(--green); }
+  .g-body { padding: 8px 12px 10px; border-top: 1px solid var(--line-2); color: var(--ink); line-height: 1.45; min-height: 44px; }
+  .g-ft { display: flex; align-items: center; gap: 6px; padding: 8px 12px 10px; }
+  .g-ft .draft { margin-right: auto; font-size: 10.5px; }
+  .help { position: fixed; right: 16px; bottom: 16px; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--blue); background: var(--blue); color: #fff; font-weight: 700; font-size: 13px; box-shadow: 0 2px 6px rgba(34,90,160,.3); z-index: 15; cursor: pointer; }
+  .help:hover { background: #1b4d8f; border-color: #1b4d8f; }
   @media (prefers-reduced-motion: reduce) { .tour-hl { transition: none; } }
   /* ---------- shell ---------- */
   .shell { background: var(--bg); min-height: 100vh; display: grid; grid-template-rows: 52px auto 1fr; }
-  .top { display: grid; grid-template-columns: 1fr minmax(320px, 620px) 1fr; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--line); gap: 12px; }
+  .top { display: grid; grid-template-columns: auto minmax(200px, 1fr) auto; align-items: center; padding: 0 16px; border-bottom: 1px solid var(--line); gap: 12px; }
   .top .left { display: flex; align-items: center; gap: 14px; }
-  .top .right { display: flex; align-items: center; gap: 12px; justify-content: flex-end; }
+  .top .right { display: flex; align-items: center; gap: 10px; justify-content: flex-end; flex: none; white-space: nowrap; }
   .logo { display: flex; align-items: center; gap: 7px; font-weight: 700; font-size: 15px; letter-spacing: -.01em; line-height: 1; }
   .logo .mark { width: 16px; height: 16px; background: var(--red); border-radius: 3px 3px 3px 8px; }
   .logo small { display: block; font-size: 9px; font-weight: 500; color: var(--muted); margin-top: 2px; letter-spacing: 0; }
   .proto-tag { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #7a4b00; background: #fff3cd; border: 1px solid #f0d9a8; border-radius: 3px; padding: 3px 8px; margin-left: 10px; cursor: help; white-space: nowrap; font-size: 11px; }
   .search { display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 6px; padding: 6px 12px; color: var(--faint); background: var(--bg); }
   .search span:last-child { margin-left: auto; font-size: 11px; }
-  .verify { background: var(--blue-bg); color: var(--blue); border-radius: 999px; padding: 4px 12px; font-weight: 500; }
+  .viewtog { display: inline-flex; border: 1px solid var(--blue); border-radius: 999px; padding: 2px; background: var(--bg-2); }
+  .viewtog button { border: 0; background: transparent; border-radius: 999px; padding: 3px 10px; font-size: 12px; white-space: nowrap; font-weight: 500; color: var(--ink-2); cursor: pointer; }
+  .viewtog button[aria-pressed="true"] { background: var(--bg); color: var(--ink); box-shadow: 0 1px 2px rgba(17,23,26,.12); }
+  .viewtog button[data-view="viewer"][aria-pressed="true"] { color: var(--blue); }
+  .viewtog[hidden] { display: none; }
+  .verify { background: var(--blue-bg); color: var(--blue); border-radius: 999px; padding: 4px 12px; font-weight: 500; white-space: nowrap; }
+  .ws { white-space: nowrap; }
   .ws { color: var(--ink); font-weight: 500; }
   .iconbtn { width: 30px; height: 30px; border-radius: 6px; border: 1px solid transparent; background: transparent; display: grid; place-items: center; color: var(--muted); }
   .iconbtn.genie { background: #f6eaf3; color: #b03a8a; }
@@ -102,8 +101,23 @@
   .copybanner .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex: none; }
   .emptyws { padding: 60px 24px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: 6px; }
   .emptyws h2 { color: var(--ink); font-size: 18px; margin: 0 0 6px; }
-  .body { display: grid; grid-template-columns: 224px 1fr; min-height: 0; }
-  @media (max-width: 900px) { .body { grid-template-columns: 1fr; } .side { display: none; } }
+  .body { display: grid; grid-template-columns: 224px auto 1fr; min-height: 0; }
+  /* workspace browser (second panel, like the real product) */
+  .wsb { width: 232px; border-right: 1px solid var(--line); background: var(--bg); overflow: auto; padding: 12px 8px; font-size: 13px; }
+  .wsb[hidden] { display: none; }
+  .wsb .h { font-weight: 600; font-size: 14px; padding: 2px 8px 10px; }
+  .wsb .t { list-style: none; margin: 0; padding: 0; }
+  .wsb .t li { display: flex; align-items: center; gap: 6px; padding: 5px 8px; border-radius: 5px; color: var(--ink); cursor: pointer; white-space: nowrap; }
+  .wsb .t li:hover { background: var(--bg-2); }
+  .wsb .t li[aria-current="true"] { background: var(--blue-bg); color: var(--blue); font-weight: 500; }
+  .wsb .t li .c { width: 12px; color: var(--muted); font-size: 10px; text-align: center; flex: none; }
+  .wsb .t li .i { width: 14px; height: 14px; color: var(--muted); flex: none; }
+  .wsb .t li[aria-current="true"] .i { color: var(--blue); }
+  .wsb .t .d1 { padding-left: 22px; } .wsb .t .d2 { padding-left: 38px; } .wsb .t .d3 { padding-left: 54px; }
+  .wsb .t li .ico { width: 10px; height: 10px; border-radius: 2px; flex: none; }
+  .wsb .t li .lab { overflow: hidden; text-overflow: ellipsis; }
+  body.viewer-mode .wsb { display: none; }
+  @media (max-width: 900px) { .body { grid-template-columns: 1fr; } .side, .wsb { display: none; } }
 
   /* ---------- sidebar ---------- */
   .side { border-right: 1px solid var(--line); padding: 12px 10px; overflow: auto; }
@@ -179,6 +193,16 @@
   .rows { font-size: 12px; color: var(--muted); margin-top: 6px; }
 
   /* notebook */
+  .titlerow .btn[hidden] { display: none; }
+  .menubar { display: flex; align-items: center; gap: 2px; margin: -4px 0 8px; position: relative; font-size: 13px; }
+  .menubar .mi { border: 0; background: transparent; color: var(--ink-2); padding: 4px 8px; border-radius: 4px; font-size: 13px; cursor: pointer; }
+  .menubar .mi:hover, .menubar .mi[aria-expanded="true"] { background: var(--bg-2); color: var(--ink); }
+  .menu { position: absolute; top: 100%; left: 0; min-width: 240px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; box-shadow: 0 8px 24px rgba(17,23,26,.16); padding: 4px; z-index: 20; }
+  .menu[hidden] { display: none; }
+  .menu button { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; border: 0; background: transparent; padding: 6px 10px; border-radius: 4px; font-size: 13px; color: var(--ink); cursor: pointer; }
+  .menu button:hover { background: var(--bg-2); }
+  .menu button .k { margin-left: auto; color: var(--faint); font-size: 11px; }
+  .menu hr { border: 0; border-top: 1px solid var(--line-2); margin: 4px 0; }
   .nbbar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
   .nbbar .pill { border: 1px solid var(--line); border-radius: 4px; padding: 4px 10px; color: var(--ink-2); display: inline-flex; gap: 6px; align-items: center; }
   .nbbar .pill .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
@@ -235,8 +259,42 @@
   .mode .d { color: var(--muted); font-size: 12px; }
   .mode[data-on="true"] { border-color: var(--blue); background: #f7fafd; }
   .section { border-top: 1px solid var(--line-2); padding-top: 12px; margin-top: 12px; }
+  .stepper { list-style: none; margin: 0 0 14px; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .stepper li { display: flex; gap: 9px; align-items: flex-start; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg-2); color: var(--muted); }
+  .stepper li .n { width: 20px; height: 20px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); display: grid; place-items: center; font-size: 11px; font-weight: 600; flex: none; }
+  .stepper li .l { display: block; font-weight: 600; font-size: 13px; color: var(--ink-2); }
+  .stepper li .d { display: block; font-size: 11px; margin-top: 1px; }
+  .stepper li[aria-current="step"] { background: var(--blue-bg); border-color: var(--blue); }
+  .stepper li[aria-current="step"] .n { background: var(--blue); border-color: var(--blue); color: #fff; }
+  .stepper li[aria-current="step"] .l { color: var(--blue); }
+  .stepper li.done .n { background: var(--green); border-color: var(--green); color: #fff; }
+  .pstep .lead { margin: 0 0 10px; color: var(--ink-2); }
+  .pstep[hidden] { display: none; }
+  .ft .btn[hidden] { display: none; }
+  .pstep .scan { margin-top: 0; }
   .section h3 { margin: 0 0 8px; font-size: 13px; font-weight: 600; }
+  details.more summary { cursor: pointer; font-size: 13px; font-weight: 600; color: var(--ink-2); list-style: none; display: flex; align-items: center; gap: 6px; }
+  details.more summary::-webkit-details-marker { display: none; }
+  details.more summary::before { content: "▸"; font-size: 11px; color: var(--muted); }
+  details.more[open] summary::before { content: "▾"; }
   .incl { border: 1px solid var(--line); border-radius: 4px; }
+  .incl .ir .rm { border: 0; background: transparent; color: var(--muted); font-size: 16px; line-height: 1; padding: 0 4px; margin-left: 6px; }
+  .incl .ir .rm:hover { color: var(--bad); }
+  .incl .ir.hint { background: var(--bg-2); color: var(--muted); font-size: 12px; }
+  .incl .ir.hint .btn { margin-left: auto; }
+  .incl .empty-sel { padding: 18px 12px; color: var(--muted); text-align: center; }
+  .assets-hd { display: flex; align-items: center; margin-bottom: 8px; }
+  .assets-hd h3 { margin: 0; }
+  .assets-hd .btn { margin-left: auto; }
+  .picker { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .picker .col { border: 1px solid var(--line); border-radius: 4px; }
+  .picker .col .h { font-size: 11px; color: var(--muted); padding: 8px 10px 4px; border-bottom: 1px solid var(--line-2); background: var(--bg-2); }
+  .picker .node { padding: 4px 10px; color: var(--ink-2); font-size: 12.5px; }
+  .picker label { display: flex; gap: 8px; align-items: center; padding: 6px 10px 6px 26px; }
+  .picker label:hover { background: var(--bg-2); }
+  .picker label .cnt { margin-left: auto; color: var(--muted); font-size: 11px; white-space: nowrap; }
+  .picker label .ico { width: 12px; height: 12px; border-radius: 2px; flex: none; }
+  .picker label .tb { color: var(--muted); }
   .incl .ir { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-top: 1px solid var(--line-2); }
   .incl .ir:first-child { border-top: 0; }
   .incl .ir.sub { padding-left: 40px; background: var(--bg-2); }
@@ -245,14 +303,15 @@
   .incl .ir select { margin-left: auto; }
   .incl .ir .r { margin-left: auto; color: var(--muted); font-size: 12px; white-space: nowrap; }
   .incl .help { font-size: 12px; color: var(--muted); padding: 6px 12px 8px 40px; background: var(--bg-2); border-top: 1px solid var(--line-2); }
-  .scan { border: 1px solid var(--line); border-radius: 4px; padding: 6px 12px 8px; margin-top: 10px; }
-  .scan .h { display: flex; align-items: center; gap: 8px; padding: 6px 0 6px; }
-  .scan .h .gi { width: 20px; height: 20px; border-radius: 5px; background: #f6eaf3; color: #b03a8a; display: grid; place-items: center; flex: none; }
-  .scan .h strong { font-weight: 600; }
+  .scan { border: 1px solid #e7cfe0; border-left: 3px solid #b03a8a; border-radius: 4px; padding: 8px 14px 10px; margin-top: 12px; background: linear-gradient(180deg, #fbf6fa 0%, #ffffff 42px); }
+  .scan .h { display: flex; align-items: center; gap: 8px; padding: 4px 0 8px; }
+  .scan .h .gi { width: 24px; height: 24px; border-radius: 6px; background: linear-gradient(135deg, #f2d9ea, #e9c3f0); color: #b03a8a; display: grid; place-items: center; flex: none; }
+  .scan .h strong { font-weight: 600; color: #7a2a60; }
   .scan .h .sub { color: var(--muted); font-size: 12px; }
-  .scan .h .re { margin-left: auto; font-size: 12px; color: var(--blue); background: transparent; border: 0; padding: 0; }
-  .scan .summary { color: var(--ink-2); padding: 0 0 6px 28px; font-size: 12.5px; }
-  .scan .row { display: flex; gap: 10px; align-items: center; padding: 5px 0; border-top: 1px solid var(--line-2); }
+  .scan .h .re { margin-left: auto; font-size: 12px; color: #b03a8a; background: transparent; border: 0; padding: 0; font-weight: 500; }
+  .scan .summary { color: var(--ink); padding: 0 0 8px 32px; font-size: 13px; font-style: italic; }
+  .scan .summary::before { content: "“"; color: #b03a8a; } .scan .summary::after { content: "”"; color: #b03a8a; }
+  .scan .row { display: flex; gap: 10px; align-items: center; padding: 6px 0; border-top: 1px solid #efe3ea; }
   .scan .row:first-of-type { border-top: 0; }
   .scan .ic { width: 16px; height: 16px; border-radius: 50%; flex: none; display: grid; place-items: center; font-size: 10px; font-weight: 700; color: #fff; line-height: 1; }
   .scan .ic.ok { background: var(--green); }
@@ -340,24 +399,15 @@
   .num { font-variant-numeric: tabular-nums; }
 </style>
 
-<!-- ================= TOUR ================= -->
+<!-- ================= GUIDE (non-blocking) ================= -->
 <div class="tour-hl" id="tour-hl" hidden></div>
-<div class="tour-card" id="tour-card" role="dialog" aria-live="polite" hidden>
-  <div class="tour-step" id="tour-step"></div>
-  <div class="tour-text" id="tour-text"></div>
-  <div class="tour-btns"><button type="button" class="btn sm" id="tour-skip">Skip tour</button><span style="flex:1"></span><button type="button" class="btn sm" id="tour-back">Back</button><button type="button" class="btn sm primary" id="tour-next">Next</button></div>
+<div class="guide" id="guide" hidden role="complementary" aria-label="Prototype guide">
+  <div class="g-hd"><strong>Prototype guide</strong><span class="step" id="tour-step"></span><button type="button" class="x" aria-label="Close guide" id="guide-x">×</button></div>
+  <ol class="g-list" id="g-list"></ol>
+  <div class="g-body" id="tour-text"></div>
+  <div class="g-ft"><span class="draft">Example data · not a Databricks product</span><button type="button" class="btn sm" id="tour-back">Back</button><button type="button" class="btn sm primary" id="tour-next">Next</button></div>
 </div>
-<div class="helppop" id="helppop" hidden role="dialog" aria-label="Prototype guide">
-  <div class="hp-hd"><strong>How this prototype flows</strong><button type="button" class="x" aria-label="Close" id="helppop-x">×</button></div>
-  <ol class="flow" id="flow">
-    <li data-go="work"><span class="n">1</span><div><button type="button" class="lnk" data-go="work">Your work</button><div class="d">A dashboard and a notebook, as they look in Free Edition. <em>Share</em> shows what exists today.</div></div></li>
-    <li data-go="publish"><span class="n">2</span><div><button type="button" class="lnk" data-go="publish">Publish a snapshot</button><div class="d">Inside the Publish button. Choose what’s included; Genie checks for personal data and secrets.</div></div></li>
-    <li data-go="viewer"><span class="n">3</span><div><button type="button" class="lnk" data-go="viewer">Signed-out viewer</button><div class="d">What a recruiter or professor sees at the link: page, queries, results, source tables. Nothing re-runs.</div></div></li>
-    <li data-go="manage"><span class="n">4</span><div><button type="button" class="lnk" data-go="manage">Published</button><div class="d">Every snapshot: what’s in it, who opened it, update or revoke.</div></div></li>
-  </ol>
-  <div class="hp-ft"><button type="button" class="btn sm" id="replay-tour">Replay guided tour</button><span class="draft">Prototype · not a Databricks product · example data</span></div>
-</div>
-<button type="button" class="help" id="help-btn" aria-label="Open prototype guide" aria-expanded="false">?</button>
+<button type="button" class="help" id="help-btn" aria-label="Open prototype guide" aria-expanded="false" title="Guide">?</button>
 
 
 <div class="shell">
@@ -368,6 +418,7 @@
     </div>
     <div class="search" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg><span>Search data, notebooks, recents, and more…</span><span>⌘ + P</span></div>
     <div class="right">
+      <div class="viewtog" role="group" aria-label="View as"><button type="button" data-view="work" aria-pressed="true">Author view</button><button type="button" data-view="viewer" aria-pressed="false">Visitor view</button></div>
       <span class="verify">Verify identity</span>
       <span class="ws">workspace ▾</span>
       <button type="button" class="iconbtn genie" aria-label="Genie Code"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.6 3.9L13.5 6.5l-3.9 1.6L8 12l-1.6-3.9L2.5 6.5l3.9-1.6z"/></svg></button>
@@ -375,20 +426,20 @@
       <div class="acct"><button type="button" class="avatar" id="avatar-btn" aria-haspopup="menu" aria-expanded="false" aria-label="Account menu">G</button>
         <div class="acctmenu" id="acctmenu" hidden role="menu">
           <div class="who" id="acct-who"></div>
-          <button type="button" role="menuitem" id="switch-acct">Back to Grace’s workspace (author)</button>
-          <div class="note">Demo: Sam is a visitor who opened a copy from Grace’s link. Each has their own Free Edition workspace.</div>
+          <button type="button" role="menuitem" id="switch-acct">Back to Grace</button>
+          <div class="note">Demo: Grace is the author. Sam is a visitor who opened a copy from her link.</div>
         </div></div>
     </div>
   </div>
 
-  <div class="sambar" id="sambar" hidden><span class="avatar sam" style="width:20px;height:20px;font-size:10px">S</span><span><strong>Visitor demo account — Sam R.</strong> This is a second, separate Free Edition workspace. Sam got here by opening Grace’s link and choosing “Open a copy.”</span><button type="button" class="btn sm" id="sambar-back">Back to Grace’s workspace</button></div>
+  <div class="sambar" id="sambar" hidden><span class="avatar sam" style="width:20px;height:20px;font-size:10px">S</span><span><strong>Viewing as Sam</strong> — the visitor’s own Free Edition workspace.</span><button type="button" class="btn sm primary" id="sambar-back">← Back to Grace</button></div>
   <div class="body">
     <aside class="side" aria-label="Sidebar">
       <button type="button" class="newbtn"><span class="plus">+</span> New</button>
       <nav class="nav">
         <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7.5L8 2l6 5.5V14H2z"/></svg>Home</a>
         <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1.5 5L8 2l6.5 3L8 8z"/><path d="M4 6.5V11l4 2 4-2V6.5"/></svg>Learn</a>
-        <a href="#" id="nav-ws" data-go="work" aria-current="page"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M6 2v12M2 6h12"/></svg>Workspace</a>
+        <a href="#" id="nav-ws" aria-current="page"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="12" height="12" rx="1"/><path d="M6 2v12M2 6h12"/></svg>Workspace</a>
         <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="6"/><path d="M8 4v4l2.5 1.5"/></svg>Recents</a>
         <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="6" height="4" rx="1"/><rect x="2" y="10" width="5" height="4" rx="1"/><rect x="9" y="10" width="5" height="4" rx="1"/><path d="M8 6v2M4.5 10V8h7v2"/></svg>Catalog</a>
         <a href="#" onclick="return false"><svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h5l2 2h5v7H2z"/></svg>Jobs &amp; Pipelines</a>
@@ -411,6 +462,11 @@
         <div class="grp">AI/ML ›</div>
       </nav>
     </aside>
+
+    <nav class="wsb" id="wsb" aria-label="Workspace browser">
+      <div class="h">Workspace</div>
+      <ul class="t" id="wsb-tree"></ul>
+    </nav>
 
     <div class="content">
       <div class="filetabs" role="tablist" aria-label="Open files">
@@ -437,8 +493,8 @@
         <section class="screen" id="screen-viewer">
           <div class="previewbar" role="status">
             <span class="eye" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="#fff" stroke-width="1.6"><path d="M1.5 8s2.5-4.5 6.5-4.5S14.5 8 14.5 8 12 12.5 8 12.5 1.5 8 1.5 8z"/><circle cx="8" cy="8" r="2"/></svg></span>
-            <div class="t"><strong>Preview as a visitor</strong> <span>— what someone without a Databricks account sees at your link. Your workspace isn’t visible to them.</span></div>
-            <div class="acts"><button type="button" class="btn sm" data-go="manage">Published</button><button type="button" class="btn sm primary" data-go="work">Back to my workspace</button></div>
+            <div class="t"><strong>Visitor preview</strong> <span>— what your link shows with no account.</span></div>
+            <div class="acts"><button type="button" class="btn sm" data-go="manage">Published</button><div class="viewtog" role="group" aria-label="View as"><button type="button" data-view="work" aria-pressed="true">Author view</button><button type="button" data-view="viewer" aria-pressed="false">Visitor view</button></div></div>
           </div>
           <div class="browser">
             <div class="tabstrip"><span class="dots" aria-hidden="true"><span></span><span></span><span></span></span><span class="btab"><span class="fav" aria-hidden="true"></span><span class="tt" id="viewer-tabtitle">Databricks</span></span></div>
@@ -453,8 +509,8 @@
 
         <!-- ================= MANAGE ================= -->
         <section class="screen" id="screen-manage">
-          <div class="titlerow"><h1>Published</h1><span class="spacer"></span><button type="button" class="btn" data-go="work">Back to my work</button></div>
-          <div class="draft" style="margin-bottom:10px">Snapshots you’ve published from this workspace. Viewers never see anything you didn’t include here.</div>
+          <div class="titlerow"><h1>Published</h1><span class="spacer"></span><button type="button" class="btn" data-go="work">Back to my work</button><button type="button" class="btn primary" id="new-snap">+ New snapshot</button></div>
+          <div class="draft" style="margin-bottom:10px">Snapshots you’ve published from this workspace.</div>
           <div id="manage-body"></div>
         </section>
       </div>
@@ -467,13 +523,19 @@
   <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="share-h" style="max-width:600px">
     <div class="hd"><h2 id="share-h">Sharing: <span data-asset-name>Bay Wheels Rides</span></h2><button type="button" class="x" aria-label="Close" data-close="share-scrim">×</button></div>
     <div class="bd">
-      <div class="today">This is the sharing dialog that exists today. Every option requires a Databricks identity in <em>this</em> account — which, in Free Edition, is you.</div>
       <div class="field"><label for="share-people">Add users or groups</label><input class="in" type="text" id="share-people" placeholder="Search by name, group, or email"></div>
       <div class="people"><div><span>Name</span><span>Permission</span></div><div><span>L (you)</span><span>Can manage</span></div></div>
-      <div class="field"><span class="lbl">Sharing settings</span><label class="rowf"><input type="checkbox"> Anyone in my account can view</label></div>
+      <div class="field"><span class="lbl">Sharing settings</span>
+        <label class="rowf" style="margin-bottom:8px"><input type="checkbox"> Anyone in my account can view</label>
+        <div class="rowf" style="justify-content:space-between;border:1px solid var(--line);border-radius:4px;padding:8px 10px;background:var(--bg-2)">
+          <label style="flex:1"><input type="checkbox" id="share-snap-opt"> Anyone with the link can view a read-only snapshot <span class="badge-new">new</span></label>
+          <button type="button" class="btn sm primary" id="share-to-publish">Set up…</button>
+        </div>
+        <div class="sub" style="margin-top:6px">Everything else here needs an account in this workspace. In Free Edition, that’s only you.</div>
+      </div>
       <div class="linkbox" id="share-link"></div>
     </div>
-    <div class="ft"><span class="hint">No option for people outside the account.</span><button type="button" class="btn" data-close="share-scrim">Done</button><button type="button" class="btn primary" id="share-to-publish">Publish a snapshot instead</button></div>
+    <div class="ft"><button type="button" class="btn" data-close="share-scrim">Done</button></div>
   </div>
 </div>
 
@@ -483,37 +545,64 @@
     <div class="hd"><h2 id="pub-h">Publish a snapshot</h2><span class="badge-new" style="margin-left:8px">new</span><button type="button" class="x" aria-label="Close" data-close="publish-scrim">×</button></div>
     <div class="bd">
       <div id="snap-opts">
-        <p style="margin:0 0 4px;color:var(--ink-2)">A read-only copy of what you choose below, at a link that works without a Databricks account. Nothing re-runs; nothing you don’t pick is reachable.</p>
-        <div class="section">
-          <h3>What to share</h3>
-          <div class="incl" id="incl"></div>
-          <div class="scan" id="scan"></div>
-        </div>
+        <ol class="stepper" id="pub-stepper" aria-label="Publish steps">
+          <li data-step="1" aria-current="step"><span class="n">1</span><span><span class="l">What to include</span><span class="d">Dashboard, notebook, tables</span></span></li>
+          <li data-step="2"><span class="n">2</span><span><span class="l">Genie check</span><span class="d">Personal data &amp; secrets</span></span></li>
+          <li data-step="3"><span class="n">3</span><span><span class="l">Who can open it</span><span class="d">Link, title, expiry</span></span></li>
+        </ol>
 
-        <div class="section">
-          <div class="field"><label for="pub-title">Title</label><input class="in" type="text" id="pub-title"></div>
-          <div class="field"><label for="pub-desc">Description <span class="draft">(optional)</span></label><input class="in" type="text" id="pub-desc" placeholder="e.g. CIS 5450 final project · DataSF + Bay Wheels · Spark SQL + AI/BI dashboard"></div>
-        </div>
-
-        <div class="section" id="aud-section">
-          <h3 id="aud-h">Who can open it</h3>
-          <label class="rowf" style="margin-bottom:6px"><input type="radio" name="aud" value="link" checked> Anyone with the link</label>
-          <label class="rowf" style="margin-bottom:6px"><input type="radio" name="aud" value="people"> Specific people — they get a link that opens for their email, no account needed</label>
-          <div class="chips" id="chips" aria-label="Recipient emails" hidden>
-            <span class="chip">prof.smith@upenn.edu <button type="button" aria-label="Remove prof.smith@upenn.edu">×</button></span>
-            <input type="text" id="chip-input" placeholder="Add an email and press Enter" aria-label="Add recipient email">
+        <div class="pstep" data-step="1">
+          <div id="pick-area">
+            <div class="picker">
+              <div class="col"><div class="h">WORKSPACE</div>
+                <div class="node">▾ Users › grace</div>
+                <label><input type="checkbox" data-pick="dash"> <span class="ico dash"></span> Bay Wheels Rides <span class="cnt">dashboard</span></label>
+                <label><input type="checkbox" data-pick="nb"> <span class="ico nb"></span> baywheels_analysis <span class="cnt">notebook</span></label>
+              </div>
+              <div class="col"><div class="h">CATALOG</div>
+                <div class="node">▾ workspace › default</div>
+                <label><input type="checkbox" data-pick="t0"> <span class="tb">▤</span> baywheels_trips <span class="cnt">214,860 rows</span></label>
+                <label><input type="checkbox" data-pick="t1"> <span class="tb">▤</span> stations <span class="cnt">512 rows</span></label>
+                <label><input type="checkbox" data-pick="t2"> <span class="tb">▤</span> rider_survey <span class="cnt">1,204 rows · personal data</span></label>
+              </div>
+            </div>
+            <div class="assets-hd" style="margin-top:14px"><h3>In this snapshot</h3></div>
+            <div class="incl" id="incl"></div>
           </div>
         </div>
 
-        <div class="section rowf">
-          <label for="expiry"><strong>Link expires</strong></label>
-          <select class="in" id="expiry"><option>1 week</option><option>1 month</option><option selected>6 months</option><option>1 year</option></select>
-          <label><input type="checkbox" id="show-name" checked> Show my name as author</label>
-          <label id="code-opt"><input type="checkbox" id="show-code" checked> Show code by default</label>
+        <div class="pstep" data-step="2" hidden>
+          <p class="lead">Genie reviews what you selected before anything goes public. Fix each finding, or confirm it’s fine to share.</p>
+          <div class="scan" id="scan"></div>
+        </div>
+
+        <div class="pstep" data-step="3" hidden>
+          <p class="lead">Name it and decide who can open the link.</p>
+          <div class="field"><label for="pub-title">Title</label><input class="in" type="text" id="pub-title"></div>
+          <div id="aud-section">
+            <h3 id="aud-h">Who can open it</h3>
+            <label class="rowf" style="margin-bottom:6px"><input type="radio" name="aud" value="link" checked> Anyone with the link</label>
+            <label class="rowf" style="margin-bottom:6px"><input type="radio" name="aud" value="people"> Only people I invite by email</label>
+            <div class="chips" id="chips" aria-label="Recipient emails" hidden>
+              <span class="chip">professor@example.edu <button type="button" aria-label="Remove professor@example.edu">×</button></span>
+              <input type="text" id="chip-input" placeholder="Add an email and press Enter" aria-label="Add recipient email">
+            </div>
+          </div>
+          <details class="section more" id="more-opts">
+            <summary>More options</summary>
+            <div class="field" style="margin-top:10px"><label for="pub-desc">Description <span class="draft">(optional)</span></label><input class="in" type="text" id="pub-desc" placeholder="e.g. CIS 5450 final project · Spark SQL + AI/BI dashboard"></div>
+            <div class="rowf">
+              <label for="expiry"><strong>Link expires</strong></label>
+              <select class="in" id="expiry"><option>1 week</option><option>1 month</option><option selected>6 months</option><option>1 year</option></select>
+              <label><input type="checkbox" id="show-name" checked> Show my name as author</label>
+              <label id="code-opt"><input type="checkbox" id="show-code" checked> Show code by default</label>
+            </div>
+            <label class="rowf" style="margin-top:10px"><input type="checkbox" id="inc-csv" checked> Let viewers download (CSV for tables, .ipynb for the notebook)</label>
+          </details>
         </div>
       </div>
     </div>
-    <div class="ft"><span class="hint" id="pub-hint"></span><button type="button" class="btn" data-close="publish-scrim">Cancel</button><button type="submit" class="btn primary" id="do-publish">Publish</button></div>
+    <div class="ft"><span class="hint" id="pub-hint"></span><button type="button" class="btn" data-close="publish-scrim">Cancel</button><button type="button" class="btn" id="pub-back">Back</button><button type="button" class="btn primary" id="pub-next">Next</button><button type="submit" class="btn primary" id="do-publish" hidden>Publish</button></div>
   </form>
 </div>
 
@@ -523,7 +612,7 @@
     <div class="hd"><h2 id="done-h">Snapshot published</h2><button type="button" class="x" aria-label="Close" data-close="done-scrim">×</button></div>
     <div class="bd">
       <div class="ok-box" id="done-sub"></div>
-      <div class="field"><span class="lbl">Link</span><div class="linkbox" id="done-link"></div><div class="help">Editing your draft won’t change the snapshot until you choose “Update snapshot” in Published.</div></div>
+      <div class="field"><span class="lbl">Link</span><div class="linkbox" id="done-link"></div><div class="help">Edits to your draft don’t change the snapshot until you update it from Published.</div></div>
     </div>
     <div class="ft"><button type="button" class="btn" id="copy-link">Copy link</button><button type="button" class="btn" data-go="manage" data-close="done-scrim">Published</button><button type="button" class="btn primary" data-go="viewer" data-close="done-scrim">Open as a viewer</button></div>
   </div>
@@ -531,14 +620,16 @@
 
 <!-- ================= SIGN IN (visitor) ================= -->
 <div class="scrim" id="signin-scrim">
-  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="signin-h" style="max-width:460px">
-    <div class="hd"><h2 id="signin-h">Sign in to open a copy</h2><button type="button" class="x" aria-label="Close" data-close="signin-scrim">×</button></div>
+  <div class="dlg" role="dialog" aria-modal="true" aria-labelledby="signin-h" style="max-width:440px">
+    <div class="hd"><h2 id="signin-h">Sign in to Databricks</h2><button type="button" class="x" aria-label="Close" data-close="signin-scrim">×</button></div>
     <div class="bd">
-      <p style="margin:0 0 10px;color:var(--ink-2)">Looking is free. To run or edit this project you need your own Free Edition workspace — the copy runs on <strong>your</strong> compute, and nothing touches the author’s.</p>
-      <div class="field"><span class="lbl">What you’ll get</span><div class="sub" id="signin-what"></div></div>
-      <div class="field"><label for="signin-email">Email</label><input class="in" type="text" id="signin-email" value="sam.r@berkeley.edu"></div>
+      <p style="margin:0 0 14px;color:var(--ink-2)">A copy needs somewhere to live, so this step signs you in to your own Free Edition workspace, or creates one. It runs on your compute; the author’s workspace is not touched.</p>
+      <div style="display:grid;gap:8px">
+        <button type="button" class="btn primary" id="signin-go" style="justify-content:center;padding:9px 14px">Log in</button>
+        <button type="button" class="btn" id="signin-create" style="justify-content:center;padding:9px 14px">Create a free account</button>
+      </div>
+      <div class="sub" style="margin-top:10px;text-align:center">Demo: Log in continues as <strong>Sam</strong>, a visitor with an empty workspace.</div>
     </div>
-    <div class="ft"><button type="button" class="btn" data-close="signin-scrim">Cancel</button><button type="button" class="btn" id="signin-create">Create a free account</button><button type="button" class="btn primary" id="signin-go">Continue as Sam (demo visitor)</button></div>
   </div>
 </div>
 
@@ -608,7 +699,7 @@ ORDER BY 2 DESC`,
     return `<div class="cat"><div class="tree"><div class="h">Catalog</div><div class="node">▾ <strong>workspace</strong></div><div class="node" style="padding-left:18px">▾ default</div>
         ${idx.map(i => `<button type="button" aria-selected="${i === (state.tbl || 0)}" data-tbl="${i}"><span style="color:var(--muted)">▤</span>${TABLES[i].name}</button>`).join("")}</div>
       <div class="main"><div class="crumb">workspace › default › ${t.name}</div><div class="th"><strong>${t.name}</strong><span class="tag">Table</span><span class="tag">Delta</span>${o.viewer ? `<span class="tag">in snapshot</span>` : ""}</div>
-        <div class="subtabs" role="tablist" style="margin-bottom:8px">${[["overview","Overview"],["sample","Sample Data"],["details","Details"]].map(x => `<button type="button" role="tab" aria-selected="${tab === x[0]}" data-cattab="${x[0]}">${x[1]}</button>`).join("")}</div>${body}</div></div>`;
+        <div class="subtabs" role="tablist" style="margin-bottom:8px">${[["overview","Overview"],["sample","Sample Data"],["details","Details"]].map(x => `<button type="button" role="tab" aria-selected="${tab === x[0]}" data-cattab="${x[0]}">${x[1]}</button>`).join("")}${o.viewer ? "" : ["Permissions","History","Lineage","Insights","Quality"].map(x => `<button type="button" role="tab" aria-selected="false" style="color:var(--faint)" title="Not part of this prototype">${x}</button>`).join("")}</div>${body}</div></div>`;
   }
   function wireCatalog(root, rerender) {
     root.querySelectorAll("[data-tbl]").forEach(b => b.addEventListener("click", () => { state.tbl = +b.dataset.tbl; rerender(); }));
@@ -658,7 +749,7 @@ ORDER BY 2 DESC`,
     </div>`;
   }
   function dataTab(opts) {
-    const o = Object.assign({ viewer: false, dropPii: false, dataMode: "full" }, opts || {});
+    const o = Object.assign({ viewer: false, dropPii: false, dataMode: "full", sql: true }, opts || {});
     const ds = DATASETS[state.ds];
     const cols = ds.cols.filter(c => !(o.dropPii && ds.pii && c === "riders"));
     const rowsHtml = ds.data.slice(0, o.dataMode === "preview" ? 3 : 5).map(r => `<tr>${r.filter((_, i) => cols.includes(ds.cols[i])).map(v => `<td>${v}</td>`).join("")}</tr>`).join("");
@@ -678,14 +769,14 @@ ORDER BY 2 DESC`,
   }
   function notebook(opts) {
     const o = Object.assign({ hideSecret: false, viewer: false }, opts || {});
-    const cell = (n, lang, code, out) => `<div class="cell"><div class="hd"><span>Cmd ${n}</span><span class="lang">${lang}</span></div>${code ? `<pre>${esc(code)}</pre>` : ""}${out ? `<div class="out${out.hid ? " hid" : ""}">${out.html}</div>` : ""}</div>`;
+    const cell = (n, lang, code, out) => `<div class="cell"><div class="hd"><span class="lang">${lang}</span><span style="margin-left:auto">Cell ${n}</span></div>${code ? `<pre>${esc(code)}</pre>` : ""}${out ? `<div class="out${out.hid ? " hid" : ""}">${out.html}</div>` : ""}</div>`;
     const md = `<div class="cell"><div class="md"><h3>Bay Wheels demand by hour and neighborhood</h3><p>CIS 5450 final project. When and where do people ride bike share in San Francisco? Data: Lyft’s public Bay Wheels trip CSV for June 2025, uploaded to <code>workspace.default.baywheels_trips</code>, joined to a stations table from DataSF.</p></div></div>`;
     const c2 = cell(2, "sql", DATASETS[0].sql, { html: `<table class="res"><thead><tr>${DATASETS[0].cols.map(c => `<th>${c}</th>`).join("")}</tr></thead><tbody>${DATASETS[0].data.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join("")}</tr>`).join("")}</tbody></table><div class="rows">Showing 5 of 24 rows</div>` });
     const c3 = cell(3, "python", `import matplotlib.pyplot as plt\ndf = _sqldf.toPandas()\nplt.plot(df.hr, df.rides / 100)\nplt.title("Rides by hour (hundreds)")`, { html: lineChart() });
     const c4 = cell(4, "sql", stripPii(DATASETS[1].sql), { html: `<table class="res"><thead><tr><th>neighborhood</th><th>rides</th></tr></thead><tbody>${boroughs.map(b => `<tr><td>${b[0]}</td><td>${b[1].toLocaleString()}</td></tr>`).join("")}</tbody></table>` });
     const secret = o.hideSecret ? { hid: true, html: "Output hidden by the author before publishing." }
       : { html: `${o.viewer ? "" : '<div class="flag">Publish will flag this output</div>'}<code>{'domain': 'data.sfgov.org', 'app_token': '4f8a92c1e7b3d5f6a0c2', 'dataset': 'wwmu-gmzc'}</code>` };
-    const c5 = cell(5, "python", `cfg = load_config("datasf")   # Socrata credentials for DataSF\nprint(cfg)   # oops — prints the app token`, secret);
+    const c5 = cell(5, "python", `cfg = load_config("datasf")   # Socrata credentials for DataSF\nprint(cfg)`, secret);
     const c6 = cell(6, "python", `df.to_csv("/Volumes/workspace/default/out/hourly_rides.csv")`, { html: `<code>Wrote 24 rows</code>` });
     return `<div class="cells">${md}${c2}${c3}${c4}${c5}${c6}</div>`;
   }
@@ -707,7 +798,7 @@ ORDER BY 2 DESC`,
       document.getElementById("work-title").textContent = "Sam’s workspace";
       document.getElementById("work-state").textContent = "";
       document.querySelectorAll('.filetab[role="tab"]').forEach(t => t.setAttribute("aria-selected", "false"));
-      body.innerHTML = `<div class="emptyws"><h2>Nothing here yet</h2>This is the visitor’s own Free Edition workspace. Open a published snapshot and choose <strong>Open a copy in your workspace</strong> to bring a project in.<br><br><button type="button" class="btn primary" data-go="viewer">Open the snapshot link</button></div>`;
+      body.innerHTML = `<div class="emptyws"><h2>Nothing here yet</h2>Open a snapshot link and choose <strong>Open a copy</strong> to bring a project in.<br><br><button type="button" class="btn primary" data-go="viewer">Open the snapshot link</button></div>`;
       wire(body); return;
     }
     const a = ASSETS[state.asset];
@@ -715,24 +806,63 @@ ORDER BY 2 DESC`,
     document.querySelectorAll("[data-asset-name]").forEach(el => el.textContent = a.name);
     document.querySelectorAll('.filetab[role="tab"]').forEach(t => { const lab = t.querySelector(".lab"); if (lab) lab.textContent = (t.dataset.asset === "dashboard" ? "Bay Wheels Rides" : "baywheels_analysis") + (isSam ? " (copy)" : ""); });
     document.querySelectorAll('.filetab[role="tab"]').forEach(t => t.setAttribute("aria-selected", String(t.dataset.asset === state.asset)));
+    if (typeof renderTree === "function") renderTree();
     document.getElementById("share-link").innerHTML = `${a.link} <span style="color:var(--faint)">— opens a sign-in page for anyone else</span>`;
     const n = isSam ? 0 : state.snapshots.filter(s => s.kind === a.kind && !s.revoked).length;
     document.getElementById("work-state").textContent = (a.kind === "dashboard" ? "Draft" : "Serverless · last run 2 min ago") + (n ? ` · ${n} live snapshot${n > 1 ? "s" : ""}` : "");
-    const banner = isSam ? `<div class="copybanner"><span class="dot"></span><span><strong>Copied from ${USERS.grace.name}’s snapshot.</strong> Runs on your compute, in your workspace. Nothing here is connected to the author’s account.</span><span style="flex:1"></span><button type="button" class="btn sm" data-go="viewer">View the original</button></div>` : "";
+    document.getElementById("btn-publish").hidden = a.kind !== "dashboard"; // notebooks publish from File ▸ Publish snapshot…, like the rest of the File actions
+    const banner = isSam ? `<div class="copybanner"><span class="dot"></span><span><strong>Copied from ${USERS.grace.name}’s snapshot.</strong> Runs on your compute — not connected to the author’s account.</span><span style="flex:1"></span><button type="button" class="btn sm" data-go="viewer">View the original</button></div>` : "";
     if (a.kind === "dashboard") {
-      body.innerHTML = banner + `<div class="subtabs" role="tablist"><button type="button" role="tab" aria-selected="${state.subtab === "data"}" data-sub="data">▤ Data</button><span class="sep"></span><button type="button" role="tab" aria-selected="${state.subtab === "page"}" data-sub="page">Page 1 <span style="color:var(--faint)">⋮</span></button><button type="button" class="plus" aria-label="Add page">+</button><span style="flex:1"></span><button type="button" role="tab" aria-selected="${state.subtab === "tables"}" data-sub="tables" title="Opens the source tables in Catalog">Source tables (3)</button></div>
+      body.innerHTML = banner + `<div class="subtabs" role="tablist"><button type="button" role="tab" aria-selected="${state.subtab === "data"}" data-sub="data">▤ Data</button><span class="sep"></span><button type="button" role="tab" aria-selected="${state.subtab === "page"}" data-sub="page">Overview <span style="color:var(--faint)">⋮</span></button><button type="button" class="plus" aria-label="Add page">+</button><span style="flex:1"></span><button type="button" role="tab" aria-selected="${state.subtab === "tables"}" data-sub="tables" title="Opens the source tables in Catalog">Source tables (3)</button></div>
         ${state.subtab === "page" ? `<div class="gfilters">⏷ Global filters</div>${dashboardPage(true)}` : state.subtab === "data" ? dataTab() : catalogPanel()}`;
     } else {
-      body.innerHTML = banner + `<div class="nbbar"><button type="button" class="btn sm" id="run-all">▶ Run all</button><span class="pill"><span class="dot"></span>Serverless</span><span class="pill">Python ▾</span><span class="draft">All changes saved</span><span style="flex:1"></span><button type="button" class="btn sm" id="au-tables" aria-pressed="${!!state.nbTables}">▤ Source tables (3)</button></div>${state.nbTables ? `<div style="margin-bottom:10px">${catalogPanel()}</div>` : ""}${notebook()}`;
+      const fileMenu = `<div class="menubar" role="menubar"><button type="button" class="mi" id="nb-file" aria-haspopup="menu" aria-expanded="false">File</button><button type="button" class="mi">Edit</button><button type="button" class="mi">View</button><button type="button" class="mi">Run</button><button type="button" class="mi">Help</button><span class="draft" style="margin-left:6px">Last edit just now</span>
+        <div class="menu" id="file-menu" role="menu" hidden><button type="button" role="menuitem">New notebook</button><button type="button" role="menuitem">Clone</button><button type="button" role="menuitem">Rename</button><button type="button" role="menuitem">Move</button><button type="button" role="menuitem">Export <span class="k">IPython, HTML, source ▸</span></button><hr>${isSam ? "" : `<button type="button" role="menuitem" id="nb-publish">Publish snapshot… <span class="badge-new">new</span></button><hr>`}<button type="button" role="menuitem">Move to trash</button></div></div>`;
+      body.innerHTML = banner + fileMenu + `<div class="nbbar"><button type="button" class="btn sm" id="run-all">▶ Run all</button><span class="pill"><span class="dot"></span>Serverless</span><span class="pill">Python ▾</span><button type="button" class="btn sm">Schedule</button><span style="flex:1"></span><button type="button" class="btn sm" id="au-tables" aria-pressed="${!!state.nbTables}">▤ Source tables (3)</button></div>${state.nbTables ? `<div style="margin-bottom:10px">${catalogPanel()}</div>` : ""}${notebook()}`;
       const at = body.querySelector("#au-tables"); if (at) at.addEventListener("click", () => { state.nbTables = !state.nbTables; renderWork(); });
+      const fm = body.querySelector("#file-menu"), fb = body.querySelector("#nb-file");
+      fb.addEventListener("click", e => { e.stopPropagation(); fm.hidden = !fm.hidden; fb.setAttribute("aria-expanded", String(!fm.hidden)); });
+      fm.addEventListener("click", e => e.stopPropagation());
+      fm.querySelectorAll('[role="menuitem"]:not(#nb-publish)').forEach(b => b.addEventListener("click", () => { fm.hidden = true; fb.setAttribute("aria-expanded", "false"); toast("Not part of this prototype"); }));
+      const np = body.querySelector("#nb-publish"); if (np) np.addEventListener("click", () => { fm.hidden = true; fb.setAttribute("aria-expanded", "false"); openPublish(false); });
       const ra = body.querySelector("#run-all"); if (ra) ra.addEventListener("click", () => toast(isSam ? "Running on Sam’s serverless compute — Grace’s quota is untouched" : "Running on serverless"));
     }
     wire(body);
+    const bb = body.querySelector("#banner-back"); if (bb) bb.addEventListener("click", () => switchUser("grace"));
     body.querySelectorAll("[data-sub]").forEach(b => b.addEventListener("click", () => { state.subtab = b.dataset.sub; renderWork(); }));
     body.querySelectorAll("[data-ds]").forEach(b => b.addEventListener("click", () => { state.ds = +b.dataset.ds; renderWork(); }));
     wireCatalog(body, renderWork);
   }
   document.querySelectorAll('.filetab[role="tab"]').forEach(t => t.addEventListener("click", () => { state.asset = t.dataset.asset; state.subtab = "page"; renderWork(); if (typeof show === "function") show("work"); }));
+  // ---------- workspace browser ----------
+  state.wsOpen = true;
+  const FOLDER = '<svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4h5l2 2h5v7H2z"/></svg>';
+  const HOME = '<svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 7.5L8 2l6 5.5V14H2z"/></svg>';
+  const PEOPLE = '<svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="6" cy="5" r="2.5"/><path d="M1.5 13c0-2.5 2-4 4.5-4s4.5 1.5 4.5 4"/><circle cx="11.5" cy="6" r="2"/><path d="M10 9.5c2.5 0 4.5 1.5 4.5 3.5"/></svg>';
+  const REPO = '<svg class="i" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="4" cy="4" r="1.5"/><circle cx="4" cy="12" r="1.5"/><circle cx="12" cy="6" r="1.5"/><path d="M4 5.5v5M12 7.5c0 2.5-8 1.5-8 4"/></svg>';
+  function renderTree() {
+    const isSam = state.user === "sam", me = isSam ? "sam@example.com" : "example@gmail.com";
+    const items = [];
+    const sfx = isSam ? " (copy)" : "";
+    const showDash = !isSam || (state.cloned && state.cloned.dash), showNb = !isSam || (state.cloned && state.cloned.nb);
+    if (showDash) items.push(`<li class="d3" data-asset="dashboard" aria-current="${state.asset === "dashboard"}"><span class="c"></span><span class="ico dash"></span><span class="lab">Bay Wheels Rides${sfx}</span></li>`);
+    if (showNb) items.push(`<li class="d3" data-asset="notebook" aria-current="${state.asset === "notebook"}"><span class="c"></span><span class="ico nb"></span><span class="lab">baywheels_analysis${sfx}</span></li>`);
+    document.getElementById("wsb-tree").innerHTML = `
+      <li><span class="c">›</span>${HOME}<span class="lab">Home</span></li>
+      <li><span class="c"></span>${PEOPLE}<span class="lab">Shared with me</span></li>
+      <li><span class="c">⌄</span>${FOLDER}<span class="lab">Workspace</span></li>
+      <li class="d1"><span class="c">›</span>${REPO}<span class="lab">Repos</span></li>
+      <li class="d1"><span class="c">›</span>${FOLDER}<span class="lab">Shared</span></li>
+      <li class="d1"><span class="c">⌄</span>${PEOPLE}<span class="lab">Users</span></li>
+      <li class="d2"><span class="c">⌄</span>${HOME}<span class="lab">${me}</span></li>
+      ${items.join("")}
+      ${isSam && !state.cloned ? `<li class="d3" style="color:var(--muted);cursor:default"><span class="c"></span><span class="lab">(empty)</span></li>` : ""}
+      <li><span class="c"></span><span class="i" style="text-align:center">☆</span><span class="lab">Favorites</span></li>
+      <li><span class="c"></span><span class="i" style="text-align:center">🗑</span><span class="lab">Trash</span></li>`;
+    document.querySelectorAll("#wsb-tree li[data-asset]").forEach(li => li.addEventListener("click", () => { state.asset = li.dataset.asset; state.subtab = "page"; renderWork(); show("work"); }));
+    document.getElementById("wsb").hidden = !state.wsOpen;
+  }
+  document.getElementById("nav-ws").addEventListener("click", e => { e.preventDefault(); if (document.querySelector('#screen-work[data-active="true"]')) state.wsOpen = !state.wsOpen; else state.wsOpen = true; show("work"); renderTree(); });
   renderWork();
 
   // ---------- navigation ----------
@@ -741,16 +871,20 @@ ORDER BY 2 DESC`,
   function show(name) {
     screens.forEach(s => document.getElementById("screen-" + s).dataset.active = String(s === name));
     document.body.classList.toggle("viewer-mode", name === "viewer");
+    document.querySelectorAll(".viewtog button").forEach(b => b.setAttribute("aria-pressed", String((b.dataset.view === "viewer") === (name === "viewer"))));
+    document.querySelectorAll(".viewtog").forEach(t => t.hidden = state.user === "sam");
     setStep(name);
     document.getElementById("nav-ws").toggleAttribute("aria-current", name === "work");
     if (name === "work") document.getElementById("nav-ws").setAttribute("aria-current", "page");
     document.getElementById("nav-pub").removeAttribute("aria-current");
     if (name === "manage") { document.getElementById("nav-pub").setAttribute("aria-current", "page"); renderManage(); }
     if (name === "viewer") renderViewer();
+    if (typeof syncTour === "function") { if (name === "viewer") syncTour("The visitor"); else if (name === "manage") syncTour("Published"); else if (name === "work" && document.getElementById("publish-scrim").dataset.open !== "true") syncTour("Publish"); }
     window.scrollTo({ top: 0 });
   }
-  function setStep(name) { document.querySelectorAll("#flow li").forEach(li => { if (li.dataset.go === name) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current"); }); }
-  function toggleHelp(force) { const pop = document.getElementById("helppop"), btn = document.getElementById("help-btn"); const open = force !== undefined ? force : pop.hidden; pop.hidden = !open; btn.setAttribute("aria-expanded", String(open)); }
+  function setStep(name) { /* screens no longer drive the guide; the guide drives the screens */ }
+  document.querySelectorAll(".viewtog button").forEach(b => b.addEventListener("click", () => { if (b.dataset.view === "viewer" && state.user === "sam") return; closeAll(); show(b.dataset.view); }));
+  function toggleHelp(force) { const g = document.getElementById("guide"), btn = document.getElementById("help-btn"); const open = force !== undefined ? force : g.hidden; if (open) { if (tourIdx < 0) startTour(0); else { g.hidden = false; } } else { endTour(); } btn.setAttribute("aria-expanded", String(open)); }
   document.querySelectorAll("[data-go]").forEach(el => el.addEventListener("click", e => { e.preventDefault(); if (el.dataset.close) closeDialog(el.dataset.close); go(el.dataset.go); }));
 
   // ---------- dialogs ----------
@@ -761,68 +895,107 @@ ORDER BY 2 DESC`,
   document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll('.scrim[data-open="true"]').forEach(s => closeDialog(s.id)); });
   document.querySelectorAll(".scrim").forEach(s => s.addEventListener("click", e => { if (e.target === s) closeDialog(s.id); }));
   document.getElementById("btn-share").addEventListener("click", () => openDialog("share-scrim"));
-  document.getElementById("btn-publish").addEventListener("click", () => openPublish(false));
+  document.getElementById("btn-publish").addEventListener("click", () => { openPublish(false); });
   document.getElementById("share-to-publish").addEventListener("click", () => { closeDialog("share-scrim"); openPublish(true); });
+  document.getElementById("share-snap-opt").addEventListener("change", e => { if (e.target.checked) { e.target.checked = false; closeDialog("share-scrim"); openPublish(true); } });
 
   // ---------- publish dialog ----------
   function setMode() { document.getElementById("pub-hint").textContent = "You can update or revoke the snapshot any time from Published."; document.getElementById("pub-hint").style.color = ""; }
-  function openPublish(snapshot) {
+  function openPublish(snapshot, fresh) {
     const a = ASSETS[state.asset];
+    state.sel = fresh ? { dash: false, nb: false, tables: [false, false, false], sql: true, results: true, code: true, dataMode: "full", csv: true } : null;
     setMode();
     document.getElementById("code-opt").hidden = true;
-    // what to share — the project's items, each with its own options
+    // assets in this snapshot — start from the asset you clicked Publish on; add more from the picker
     state.fixed = { pii: false, secret: false }; state.kept = { pii: false, secret: false };
+    if (!state.sel) state.sel = { dash: a.kind === "dashboard", nb: a.kind === "notebook", tables: [false, false, false], sql: true, results: true, code: true, dataMode: "full", csv: true };
     const incl = document.getElementById("incl");
-    const tblRows = TABLES.map((t, i) => `<div class="ir sub"><label><input type="checkbox" class="inc-tbl" data-i="${i}" checked> <code>${t.name}</code></label><span class="cnt">${t.rows} rows · ${t.size}${t.pii ? " · contains personal data" : ""}</span></div>`).join("");
-    incl.innerHTML = `
-      <div class="ir"><label><input type="checkbox" id="inc-dash" ${a.kind === "dashboard" || state.cloned ? "checked" : "checked"}> <span class="ico dash" aria-hidden="true"></span> Bay Wheels Rides <span class="cnt">dashboard · 4 visualizations, 1 global filter</span></label></div>
-      <div class="ir sub" data-under="inc-dash"><label><input type="checkbox" id="inc-sql" checked> Queries</label><span class="cnt">2 datasets · hourly_rides, neighborhood_rides</span></div>
-      <div class="ir sub" data-under="inc-dash"><label><input type="checkbox" id="inc-results" checked> Query results</label><span class="cnt">29 rows</span></div>
-      <div class="ir"><label><input type="checkbox" id="inc-nb" checked> <span class="ico nb" aria-hidden="true"></span> baywheels_analysis <span class="cnt">notebook · 6 cells, 4 outputs, 1 chart</span></label></div>
-      <div class="ir sub" data-under="inc-nb"><label><input type="checkbox" id="inc-code" checked> Code</label><span class="cnt">SQL and Python in every cell · viewers can toggle</span></div>
-      <div class="ir"><label><input type="checkbox" id="inc-tables" checked> Source tables <span class="cnt">3 tables · 38.4 MB</span></label><select class="in" id="inc-data"><option value="full" selected>All rows</option><option value="preview">First 100 rows</option><option value="schema">Columns only</option></select></div>
-      ${tblRows}
-      <div class="help">Included by default: Free Edition is for personal, non-commercial work, and a viewer can’t run anything without the data. Untick what isn’t yours to share.</div>
-      <div class="ir"><label><input type="checkbox" id="inc-csv" checked> Let viewers download (CSV for tables, .ipynb for the notebook)</label></div>`;
-    // parent/child behaviour
-    const link = (parent, kids) => { const P = incl.querySelector("#" + parent); const K = incl.querySelectorAll(kids); P.addEventListener("change", () => K.forEach(k => { k.disabled = !P.checked; k.closest(".ir").style.opacity = P.checked ? "" : ".5"; })); };
-    link("inc-dash", '[data-under="inc-dash"] input'); link("inc-nb", '[data-under="inc-nb"] input');
-    const tblBoxes = [...incl.querySelectorAll(".inc-tbl")], tblAll = incl.querySelector("#inc-tables");
-    tblAll.addEventListener("change", () => tblBoxes.forEach(b => b.checked = tblAll.checked));
-    tblBoxes.forEach(b => b.addEventListener("change", () => { tblAll.checked = tblBoxes.some(x => x.checked); tblAll.indeterminate = tblAll.checked && !tblBoxes.every(x => x.checked); }));
+    function renderIncl() {
+      const S = state.sel, nT = S.tables.filter(Boolean).length, usesTables = (S.dash || S.nb) && nT < 3;
+      const rows = [];
+      if (S.dash) rows.push(`<div class="ir"><label><span class="ico dash" aria-hidden="true"></span> Bay Wheels Rides <span class="cnt">dashboard · 1 page (Overview) · 4 visualizations, 1 global filter</span></label><button type="button" class="rm" data-rm="dash" aria-label="Remove dashboard">×</button></div>
+        <div class="ir sub"><label><input type="checkbox" id="inc-sql" ${S.sql ? "checked" : ""}> Queries</label><span class="cnt">2 datasets · hourly_rides, neighborhood_rides</span></div>
+        <div class="ir sub"><label><input type="checkbox" id="inc-results" ${S.results ? "checked" : ""}> Query results</label><span class="cnt">29 rows</span></div>`);
+      if (S.nb) rows.push(`<div class="ir"><label><span class="ico nb" aria-hidden="true"></span> baywheels_analysis <span class="cnt">notebook · 6 cells, 4 outputs, 1 chart</span></label><button type="button" class="rm" data-rm="nb" aria-label="Remove notebook">×</button></div>
+        <div class="ir sub"><label><input type="checkbox" id="inc-code" ${S.code ? "checked" : ""}> Code</label><span class="cnt">SQL and Python in every cell · viewers can toggle</span></div>`);
+      if (nT) rows.push(`<div class="ir"><label>▤ Source tables <span class="cnt">${nT} table${nT > 1 ? "s" : ""}</span></label><select class="in" id="inc-data"><option value="full" ${S.dataMode === "full" ? "selected" : ""}>All rows</option><option value="preview" ${S.dataMode === "preview" ? "selected" : ""}>First 100 rows</option><option value="schema" ${S.dataMode === "schema" ? "selected" : ""}>Columns only</option></select></div>
+        ${TABLES.map((t, i) => S.tables[i] ? `<div class="ir sub"><label><code>${t.name}</code></label><span class="cnt">${t.rows} rows · ${t.size}${t.pii ? " · contains personal data" : ""}</span><button type="button" class="rm" data-rm="t${i}" aria-label="Remove ${t.name}">×</button></div>` : "").join("")}`);
+      if (usesTables) { const m = 3 - nT; rows.push(`<div class="ir hint"><span>${S.dash ? "The dashboard" : "The notebook"} reads ${m === 3 ? "3 tables that aren’t" : m === 1 ? "1 more table that isn’t" : `${m} more tables that aren’t`} in the snapshot — viewers can’t run it without them.</span><button type="button" class="btn sm" id="add-tables" style="white-space:nowrap">Add ${m === 3 ? "the tables" : m === 1 ? "the table" : "them"}</button></div>`); }
+      incl.innerHTML = (S.dash || S.nb || nT) ? rows.join("") : `<div class="empty-sel">Nothing selected yet — tick a dashboard, notebook or tables above.</div>`;
+      document.querySelectorAll("[data-pick]").forEach(c => { const k = c.dataset.pick; c.checked = k === "dash" ? S.dash : k === "nb" ? S.nb : S.tables[+k.slice(1)]; });
+      const csvEl = document.getElementById("inc-csv"); if (csvEl) csvEl.checked = !!S.csv;
+      incl.querySelectorAll("[data-rm]").forEach(b => b.addEventListener("click", () => { const k = b.dataset.rm; if (k === "dash") S.dash = false; else if (k === "nb") S.nb = false; else S.tables[+k.slice(1)] = false; renderIncl(); renderScan(); }));
+      const at = incl.querySelector("#add-tables"); if (at) at.addEventListener("click", () => { S.tables = [true, true, true]; renderIncl(); renderScan(); toast("Added 3 source tables"); });
+      const bind = (id, key) => { const el = incl.querySelector("#" + id); if (el) el.addEventListener("change", () => { S[key] = el.type === "checkbox" ? el.checked : el.value; renderScan(); }); };
+      bind("inc-sql", "sql"); bind("inc-results", "results"); bind("inc-code", "code"); bind("inc-data", "dataMode");
+    }
+    const csvBox = document.getElementById("inc-csv"); if (csvBox && !csvBox.dataset.bound) { csvBox.dataset.bound = "1"; csvBox.addEventListener("change", () => { state.sel.csv = csvBox.checked; }); }
+    const tblBoxes = { some: () => state.sel.tables.some(Boolean), count: () => state.sel.tables.filter(Boolean).length };
     // Genie check — one row per finding, findings depend on what's selected
     const scan = document.getElementById("scan");
-    const genieIcon = `<span class="gi" aria-hidden="true"><svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.6 3.9L13.5 6.5l-3.9 1.6L8 12l-1.6-3.9L2.5 6.5l3.9-1.6z"/></svg></span>`;
+    const genieIcon = `<span class="gi" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 1l1.6 3.9L13.5 6.5l-3.9 1.6L8 12l-1.6-3.9L2.5 6.5l3.9-1.6z"/><path d="M13 10l.7 1.6 1.6.7-1.6.7L13 14.6l-.7-1.6-1.6-.7 1.6-.7z"/></svg></span>`;
     const FL = {
       pii: { text: "Personal data: the <code>riders</code> column is computed from <code>rider_survey.rider_email</code>", fix: "Drop column", done: "<code>riders</code> column dropped from the snapshot" },
       secret: { text: "Secret: notebook cell 5 prints what looks like an API token (<code>app_token 4f8a…</code>)", fix: "Hide output", done: "Cell 5 output hidden from the snapshot" },
     };
     function renderScan() {
-      const d = incl.querySelector("#inc-dash").checked, n = incl.querySelector("#inc-nb").checked;
-      const anyT = tblBoxes.some(x => x.checked);
+      const d = state.sel.dash, n = state.sel.nb;
+      const anyT = tblBoxes.some();
       const findings = []; if (d) findings.push("pii"); if (n) findings.push("secret");
       const open = findings.filter(f => !state.fixed[f] && !state.kept[f]).length;
       const row = f => state.fixed[f] ? `<div class="row" data-f="${f}"><span class="ic ok" aria-label="OK">✓</span><span class="t">${FL[f].done}</span></div>`
         : `<div class="row" data-f="${f}"><span class="ic warn" aria-label="Warning">!</span><span class="t">${FL[f].text}${state.kept[f] ? ' <span class="kept">— kept; you confirmed it’s fine to share</span>' : ""}</span><span class="acts"><button type="button" class="btn sm" data-fix="${f}">${FL[f].fix}</button>${state.kept[f] ? "" : `<button type="button" class="btn sm" data-keep="${f}">Keep it</button>`}</span></div>`;
-      scan.innerHTML = `<div class="h">${genieIcon}<strong>Genie checked what you selected</strong><span class="sub">· ${[d ? "dashboard" : "", n ? "notebook" : "", anyT ? `${tblBoxes.filter(x => x.checked).length} tables` : ""].filter(Boolean).join(", ") || "nothing selected"} · just now</span><button type="button" class="re" id="re-check">Check again</button></div>
-        <div class="summary" id="scan-summary">${open === 0 ? "Nothing left to look at — ready to publish." : open === 1 ? "One thing to look at before this goes public:" : `${open} things to look at before this goes public:`}</div>
+      scan.innerHTML = `<div class="h">${genieIcon}<strong>Genie</strong><span class="sub">checked what you selected</span><span class="sub">· ${[d ? "dashboard" : "", n ? "notebook" : "", anyT ? `${tblBoxes.count()} table${tblBoxes.count() > 1 ? "s" : ""}` : ""].filter(Boolean).join(", ") || "nothing selected"} · just now</span><button type="button" class="re" id="re-check">Check again</button></div>
+        <div class="summary" id="scan-summary">${open === 0 ? "I don’t see anything else to fix — this is ready to publish." : open === 1 ? "I found one thing worth a look before this goes public:" : `I found ${open} things worth a look before this goes public:`}</div>
         ${d ? `<div class="row"><span class="ic ok" aria-label="OK">✓</span><span class="t">Dashboard: 4 visualizations, 2 datasets (29 result rows)</span></div>` : ""}
         ${n ? `<div class="row"><span class="ic ok" aria-label="OK">✓</span><span class="t">Notebook: 6 cells, 4 outputs</span></div>` : ""}
         ${findings.map(row).join("")}
         ${anyT ? `<div class="row"><span class="ic ok" aria-label="OK">✓</span><span class="t">Tables: no other personal data in previews</span></div>` : ""}`;
       scan.querySelectorAll("[data-fix]").forEach(b => b.addEventListener("click", () => { state.fixed[b.dataset.fix] = true; state.kept[b.dataset.fix] = false; renderScan(); toast(b.dataset.fix === "pii" ? "riders column dropped from the snapshot" : "Cell 5 output hidden"); }));
       scan.querySelectorAll("[data-keep]").forEach(b => b.addEventListener("click", () => { state.kept[b.dataset.keep] = true; renderScan(); }));
-      const rc = scan.querySelector("#re-check"); if (rc) rc.addEventListener("click", () => toast("Genie re-checked — no new findings"));
+      const rc = scan.querySelector("#re-check"); if (rc) rc.addEventListener("click", () => toast("Genie re-checked. No new findings."));
     }
-    incl.querySelectorAll("input").forEach(i => i.addEventListener("change", renderScan));
-    renderScan();
+    function renderExisting() {
+      const S = state.sel; const ex = state.snapshots.find(x => !x.revoked && x.incDash === S.dash && x.incNb === S.nb && x.tables.join() === S.tables.join());
+      let bar = document.getElementById("pub-existing");
+      if (!bar) { bar = document.createElement("div"); bar.id = "pub-existing"; bar.className = "today"; incl.parentElement.insertBefore(bar, incl); }
+      bar.hidden = !ex;
+      if (ex) bar.innerHTML = `Already published as <span style="font-family:var(--mono)">${shortLink(ex)}</span> · publishing again <strong>updates that snapshot</strong> — the link stays the same.`;
+      document.getElementById("do-publish").textContent = ex ? "Update snapshot" : "Publish";
+    }
+    const _ri = renderIncl; renderIncl = function () { _ri(); renderExisting(); };
+    renderIncl(); renderScan();
+    state._renderIncl = renderIncl; state._renderScan = renderScan;
     document.getElementById("pub-title").value = "Bay Wheels rides — demand by hour and neighborhood";
     // audience default
     document.querySelector('input[name="aud"][value="link"]').checked = true;
     document.getElementById("chips").hidden = true;
+    setPubStep(1);
     openDialog("publish-scrim");
     setStep("publish");
   }
+  // ---------- publish wizard ----------
+  let pubStep = 1;
+  function setPubStep(n) {
+    pubStep = Math.max(1, Math.min(3, n));
+    document.querySelectorAll("#publish-scrim .pstep").forEach(el => el.hidden = +el.dataset.step !== pubStep);
+    document.querySelectorAll("#pub-stepper li").forEach(li => { const k = +li.dataset.step; li.classList.toggle("done", k < pubStep); if (k === pubStep) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current"); });
+    document.getElementById("pub-back").hidden = pubStep === 1;
+    document.getElementById("pub-next").hidden = pubStep === 3;
+    document.getElementById("do-publish").hidden = pubStep !== 3;
+    const hint = document.getElementById("pub-hint"); hint.textContent = ""; hint.style.color = "";
+    if (pubStep === 2 && state._renderScan) state._renderScan();
+    if (typeof syncTour === "function") syncTour(["", "Choose what to include", "Genie checks it", "Who can open it"][pubStep]);
+    if (typeof tourIdx !== "undefined" && tourIdx >= 0) requestAnimationFrame(() => requestAnimationFrame(() => place(true)));
+  }
+  document.querySelectorAll("#pub-stepper li").forEach(li => li.addEventListener("click", () => setPubStep(+li.dataset.step)));
+  document.getElementById("pub-back").addEventListener("click", () => setPubStep(pubStep - 1));
+  document.getElementById("pub-next").addEventListener("click", () => {
+    const hint = document.getElementById("pub-hint"), S = state.sel;
+    if (pubStep === 1 && !(S.dash || S.nb || S.tables.some(Boolean))) { hint.textContent = "Add at least one asset to share."; hint.style.color = "var(--amber)"; return; }
+    if (pubStep === 2) { const need = (S.dash && !state.fixed.pii && !state.kept.pii) || (S.nb && !state.fixed.secret && !state.kept.secret); if (need) { hint.textContent = "Resolve Genie’s findings first: fix each one, or choose Keep it."; hint.style.color = "var(--amber)"; return; } }
+    setPubStep(pubStep + 1);
+  });
   document.querySelectorAll('input[name="aud"]').forEach(r => r.addEventListener("change", () => { document.getElementById("chips").hidden = document.querySelector('input[name="aud"]:checked').value !== "people"; }));
 
   // chips
@@ -840,31 +1013,42 @@ ORDER BY 2 DESC`,
   chips.addEventListener("click", e => { if (e.target.tagName === "BUTTON") e.target.parentElement.remove(); });
 
   // submit
+  document.getElementById("new-snap").addEventListener("click", () => { show("work"); openPublish(true, true); });
+  // inline picker (step 1) — ticking an item adds it to the snapshot immediately
+  document.querySelectorAll("[data-pick]").forEach(c => c.addEventListener("change", () => {
+    const S = state.sel, k = c.dataset.pick;
+    if (k === "dash") S.dash = c.checked; else if (k === "nb") S.nb = c.checked; else S.tables[+k.slice(1)] = c.checked;
+    if (state._renderIncl) { state._renderIncl(); state._renderScan(); }
+  }));
   document.getElementById("publish-form").addEventListener("submit", e => {
     e.preventDefault();
     const hint = document.getElementById("pub-hint");
-    const g = id => document.getElementById(id).checked;
-    const incDash = g("inc-dash"), incNb = g("inc-nb"), tables = [...document.querySelectorAll(".inc-tbl")].map(b => b.checked);
-    if (!incDash && !incNb && !tables.some(Boolean)) { hint.textContent = "Select at least one thing to share."; hint.style.color = "var(--amber)"; document.getElementById("inc-dash").focus(); return; }
+    const S = state.sel, g = k => !!S[k];
+    const incDash = S.dash, incNb = S.nb, tables = S.tables.slice();
+    if (!incDash && !incNb && !tables.some(Boolean)) { setPubStep(1); hint.textContent = "Add at least one asset to share."; hint.style.color = "var(--amber)"; return; }
     const need = []; if (incDash && !state.fixed.pii && !state.kept.pii) need.push("pii"); if (incNb && !state.fixed.secret && !state.kept.secret) need.push("secret");
-    if (need.length) { hint.textContent = "Resolve Genie’s findings first — fix each one, or choose Keep it."; hint.style.color = "var(--amber)"; const kf = document.querySelector("#scan [data-keep]"); if (kf) kf.focus(); return; }
+    if (need.length) { setPubStep(2); hint.textContent = "Resolve Genie’s findings first: fix each one, or choose Keep it."; hint.style.color = "var(--amber)"; return; }
     const aud = document.querySelector('input[name="aud"]:checked').value;
     const emails = [...chips.querySelectorAll(".chip")].map(c => c.firstChild.textContent.trim());
     if (aud === "people" && !emails.length) { hint.textContent = "Add at least one email, or choose “Anyone with the link.”"; hint.style.color = "var(--amber)"; chipInput.focus(); return; }
-    const snap = { id: Math.random().toString(36).slice(2, 8), owner: "grace",
+    const same = x => !x.revoked && x.incDash === incDash && x.incNb === incNb && x.tables.join() === tables.join();
+    const existing = state.snapshots.find(same);
+    const snap = { id: existing ? existing.id : Math.random().toString(36).slice(2, 8), owner: "grace",
       kind: incDash && incNb ? "project" : incDash ? "dashboard" : incNb ? "notebook" : "tables",
-      incDash, incNb, incSql: incDash && g("inc-sql"), incResults: incDash && g("inc-results"), incCode: incNb && g("inc-code"),
-      tables, dataMode: document.getElementById("inc-data").value, csv: g("inc-csv"),
+      incDash, incNb, incSql: incDash && g("sql"), incResults: incDash && g("results"), incCode: incNb && g("code"),
+      tables, dataMode: S.dataMode, csv: g("csv"),
       hiddenPii: state.fixed.pii, hiddenSecret: state.fixed.secret,
       title: document.getElementById("pub-title").value || "Untitled", desc: document.getElementById("pub-desc").value,
       aud, emails, expiry: document.getElementById("expiry").value, showName: document.getElementById("show-name").checked,
-      created: new Date(), updated: null, views: 0, revoked: false };
-    state.snapshots.unshift(snap); state.current = snap;
+      created: existing ? existing.created : new Date(), updated: existing ? new Date() : null, views: existing ? existing.views : 0, revoked: false };
+    if (existing) state.snapshots[state.snapshots.indexOf(existing)] = snap; else state.snapshots.unshift(snap);
+    state.current = snap;
     closeDialog("publish-scrim");
+    document.getElementById("done-h").textContent = existing ? "Snapshot updated" : "Snapshot published";
     document.getElementById("done-link").innerHTML = `<a href="${linkFor(snap)}" target="_blank" rel="noopener" style="color:var(--blue);text-decoration:none">${shortLink(snap)}</a> <span style="color:var(--faint)">— real link, opens in a new tab</span>`;
     document.getElementById("done-link").dataset.href = linkFor(snap);
     persist();
-    document.getElementById("done-sub").innerHTML = (aud === "people" ? `Sent to <strong>${esc(emails.join(", "))}</strong>. ` : `<strong>Anyone with the link</strong> can open it. `) + `Included: ${describeIncl(snap)}.`;
+    document.getElementById("done-sub").innerHTML = (existing ? `<strong>Same link, updated.</strong> These assets were already published, so the existing snapshot was refreshed instead of creating a new one. ` : (aud === "people" ? `Sent to <strong>${esc(emails.join(", "))}</strong>. ` : `<strong>Anyone with the link</strong> can open it. `)) + `Included: ${describeIncl(snap)}.`;
     renderWork(); openDialog("done-scrim"); setStep("publish");
   });
   function describeIncl(s) {
@@ -876,9 +1060,30 @@ ORDER BY 2 DESC`,
     return parts.join(", ") || "nothing";
   }
   function baseUrl() { return location.origin && location.origin !== "null" ? location.origin + location.pathname : location.href.split("?")[0].split("#")[0]; }
-  function packSnap(s) { const o = { ...s, created: s.created && s.created.toISOString ? s.created.toISOString() : s.created, updated: s.updated && s.updated.toISOString ? s.updated.toISOString() : s.updated }; delete o.views; delete o.gateOpened; delete o.vtab; delete o.nbTables; return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
-  function unpackSnap(v) { try { const j = JSON.parse(decodeURIComponent(escape(atob(v.replace(/-/g, "+").replace(/_/g, "/"))))); j.created = new Date(j.created); j.updated = j.updated ? new Date(j.updated) : null; j.views = 0; return j; } catch (e) { return null; } }
-  function linkFor(s) { return `${baseUrl()}?v=${packSnap(s)}`; }
+  const DEF_TITLE = "Bay Wheels rides — demand by hour and neighborhood";
+  const EXP = ["1 week", "1 month", "6 months", "1 year"], DM = ["full", "preview", "schema"];
+  function packSnap(s) {
+    const bits = [s.incDash, s.incNb, s.incSql, s.incResults, s.incCode, s.csv, s.showName, s.hiddenPii, s.hiddenSecret, ...(s.tables || [false, false, false])];
+    let flags = 0; bits.forEach((v, i) => { if (v) flags |= 1 << i; });
+    const parts = [s.id, flags.toString(36), DM.indexOf(s.dataMode), s.aud === "people" ? "p" : "l", EXP.indexOf(s.expiry), Math.floor(new Date(s.created).getTime() / 60000).toString(36)];
+    const extra = {}; if (s.title && s.title !== DEF_TITLE) extra.t = s.title; if (s.desc) extra.d = s.desc; if (s.aud === "people" && s.emails && s.emails.length) extra.e = s.emails.join(",");
+    let out = parts.join(".");
+    if (Object.keys(extra).length) out += "~" + encodeURIComponent(JSON.stringify(extra));
+    return out;
+  }
+  function unpackSnap(v) {
+    try {
+      if (v.startsWith("ey")) { const j = JSON.parse(decodeURIComponent(escape(atob(v.replace(/-/g, "+").replace(/_/g, "/"))))); j.created = new Date(j.created); j.updated = j.updated ? new Date(j.updated) : null; j.views = 0; return j; } // legacy links
+      const [core, ex] = v.split("~"); const [id, fl, dm, aud, exp, ts] = core.split(".");
+      const flags = parseInt(fl, 36); const bit = i => !!(flags & (1 << i));
+      const extra = ex ? JSON.parse(decodeURIComponent(ex)) : {};
+      return { id, owner: "grace", incDash: bit(0), incNb: bit(1), incSql: bit(2), incResults: bit(3), incCode: bit(4), csv: bit(5), showName: bit(6), hiddenPii: bit(7), hiddenSecret: bit(8), tables: [bit(9), bit(10), bit(11)],
+        kind: bit(0) && bit(1) ? "project" : bit(0) ? "dashboard" : bit(1) ? "notebook" : "tables",
+        dataMode: DM[+dm] || "full", aud: aud === "p" ? "people" : "link", expiry: EXP[+exp] || "6 months", emails: extra.e ? extra.e.split(",") : [],
+        title: extra.t || DEF_TITLE, desc: extra.d || "", created: new Date(parseInt(ts, 36) * 60000), updated: null, views: 0, revoked: false };
+    } catch (e) { return null; }
+  }
+  function linkFor(s) { return `${baseUrl()}?s=${packSnap(s)}`; }
   function shortLink(s) { return `share.databricks.example/p/${s.id}`; }
   function persist() { try { localStorage.setItem("fe-proto-snapshots", JSON.stringify(state.snapshots.map(x => ({ ...x, created: x.created.toISOString(), updated: x.updated ? x.updated.toISOString() : null })))); } catch (e) {} }
   function restore() { try { const raw = localStorage.getItem("fe-proto-snapshots"); if (!raw) return; state.snapshots = JSON.parse(raw).map(x => ({ ...x, created: new Date(x.created), updated: x.updated ? new Date(x.updated) : null })); } catch (e) {} }
@@ -903,14 +1108,14 @@ ORDER BY 2 DESC`,
     if (!s.vtab || !tabs.some(t => t[0] === s.vtab)) s.vtab = tabs.length ? tabs[0][0] : "dash";
     const date = s.created.toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" });
     let content = "";
-    if (s.vtab === "dash") content = dashboardPage(false);
+    if (s.vtab === "dash") content = `<div class="subtabs" role="tablist" style="margin-top:-4px"><button type="button" role="tab" aria-selected="true">Overview</button></div>` + dashboardPage(false);
     else if (s.vtab === "nb") content = `<div class="nbbar"><button type="button" class="btn sm" id="toggle-code" aria-pressed="${!!s.incCode}" ${s.incCode ? "" : "disabled title='The author did not include the code'"}>${(s.showCodeNow ?? s.incCode) ? "Hide code" : "Show code"}</button><span class="draft">6 cells · outputs as last run · nothing re-runs</span></div><div id="viewer-content" class="${(s.showCodeNow ?? s.incCode) ? "" : "codehidden"}">${notebook({ hideSecret: s.hiddenSecret, viewer: true })}</div>`;
     else if (s.vtab === "data") content = dataTab({ viewer: true, dropPii: s.hiddenPii, dataMode: s.incResults ? s.dataMode : "hide", csv: s.csv, sql: s.incSql });
     else content = catalogPanel({ viewer: true, dataMode: s.dataMode, dropPii: s.hiddenPii, tables: s.tables });
     const main = `<div class="subtabs" role="tablist">${tabs.map((t, i) => `${i === 1 && tabs[0][0] === "dash" && t[0] !== "nb" ? '<span class="sep"></span>' : ""}<button type="button" role="tab" aria-selected="${s.vtab === t[0]}" data-vtab="${t[0]}">${t[1]}</button>`).join("")}<span style="flex:1"></span><span class="draft">frozen at publish time · nothing re-runs</span></div>${content}`;
     body.innerHTML = `
       <div class="vhead"><div><h2>${esc(s.title)}</h2><div class="vmeta">${s.showName ? "Grace L. · " : ""}Published ${date} · Snapshot · Expires ${expiryDate(s)}${s.updated ? " · Updated " + s.updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}${s.hiddenPii ? " · 1 column removed by the author" : ""}${s.hiddenSecret ? " · 1 cell output hidden by the author" : ""}</div>${s.desc ? `<div class="vdesc">${esc(s.desc)}</div>` : ""}</div>
-        <div class="actions">${s.csv && s.incNb ? `<button type="button" class="btn sm">Download .ipynb</button>` : ""}<button type="button" class="btn sm primary" id="open-copy">Open a copy in your workspace</button></div></div>
+        <div class="actions">${s.csv && s.incNb ? `<button type="button" class="btn sm">Download .ipynb</button>` : ""}<span class="viewtog-note" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><button type="button" class="btn sm primary" id="open-copy">Open a copy in your workspace</button><span class="draft" style="font-size:11px">Needs a free Databricks account. Viewing does not.</span></span></div></div>
       <div class="vbody">${main}</div>
       <div class="vfoot"><span class="brand"><span class="mark" aria-hidden="true"></span>Made with Databricks Free Edition</span><span>Free for students, educators and hobbyists.</span><span class="right"><a href="#" onclick="return false">Report this page</a>${s.aud === "link" ? ` · <a href="#" onclick="return false">Try it yourself — it’s free</a>` : ` · Shared privately with ${esc(s.emails.join(", "))}`}</span></div>`;
     body.querySelectorAll("[data-vtab]").forEach(b => b.addEventListener("click", () => { s.vtab = b.dataset.vtab; s.views -= 1; renderViewer(); }));
@@ -948,57 +1153,79 @@ ORDER BY 2 DESC`,
   function wire(root) { root.querySelectorAll("[data-go]").forEach(el => el.addEventListener("click", e => { e.preventDefault(); go(el.dataset.go); })); }
 
 
-  // ---------- guided tour ----------
+  // ---------- guide (persistent, non-blocking) ----------
   const TOUR = [
-    { center: true, text: "<strong>Prototype — a proposed Free Edition feature, not a Databricks product.</strong><br>Example data: Bay Wheels rides in San Francisco. Five quick steps, or skip and click around on your own." },
-    { target: "#publish-scrim .hd", enter: () => { closeAll(); show("work"); openPublish(true); }, text: "<strong>The proposal.</strong> A Publish button on dashboards and notebooks that creates a read-only snapshot at a link that works without a Databricks account. Nothing re-runs, and nothing outside the snapshot is reachable." },
-    { target: "#incl", enter: () => { ensurePublish(); }, text: "<strong>What to share.</strong> Pick the pieces of the project — dashboard, notebook, source tables — and what goes with each. Everything is on by default, like a Kaggle notebook, because Free Edition is non-commercial; untick what isn’t yours to share." },
-    { target: "#scan", enter: () => { ensurePublish(); }, text: "<strong>Genie checks it first.</strong> Before anything goes public, Genie scans what you selected for personal data and secrets — here a column computed from <code>rider_email</code> and a printed API token. Fix each or keep it deliberately; Next fixes both and publishes." },
-    { target: "#viewer-who", enter: () => { if (!state.current || state.current.revoked) { ensurePublish(); document.querySelectorAll("#scan [data-fix]").forEach(b => b.click()); document.getElementById("publish-form").requestSubmit(); } closeAll(); if (state.current) { state.current.gateOpened = true; state.current.vtab = "dash"; } show("viewer"); }, text: "<strong>The viewer.</strong> Your workspace disappears — this is the visitor’s browser. Not signed in, no compute running. Tabs for each piece you shared — dashboard, notebook, queries and results, source tables. “Open a copy in your workspace” asks the visitor to sign in to their <em>own</em> Free Edition — that’s where new users come from." },
-    { target: "#manage-body table", enter: () => { closeAll(); show("manage"); }, text: "<strong>Control.</strong> Every snapshot in one place — what was included, who can open it, how many did — with Update and Revoke. Registered in Unity Catalog with lineage, and logged." },
-    { center: true, text: "That’s it. Explore freely — try the notebook tab, publish with other options, revoke a link and reopen it as a viewer. The <strong>?</strong> button restarts this tour." },
+    { center: true, label: null, text: "A prototype of a proposed Free Edition feature. Click a step, or press Start. You can keep using the page while this is open." },
+    { label: "Publish", d: "The Publish button on a dashboard, or File ▸ Publish snapshot in a notebook.", target: "#btn-publish", enter: () => { closeAll(); if (state.asset !== "dashboard") { state.asset = "dashboard"; renderWork(); } show("work"); }, text: "<strong>Publish.</strong> Dashboards already have this button. Notebooks get the same action under File ▸ Publish snapshot. Click it, or press Next, to open the snapshot flow." },
+    { label: "Choose what to include", d: "Dashboard, notebook, tables. Data is included by default.", target: "#pick-area", enter: () => { ensurePublish(); setPubStep(1); }, text: "<strong>Choose what to include.</strong> The asset you started from is already ticked. Tick the notebook or the source tables to add them. The list underneath is what viewers will get." },
+    { label: "Genie checks it", d: "Flags personal data and secrets before anything goes public.", target: "#scan", enter: () => { ensurePublish(); setPubStep(2); }, text: "<strong>Genie checks it.</strong> Anything that looks like personal data or a secret is flagged here. Fix it, or keep it if it is meant to be shared." },
+    { label: "Who can open it", d: "Anyone with the link, or only people you invite.", target: "#aud-section", enter: () => { ensurePublish(); document.querySelectorAll("#scan [data-fix]").forEach(b => b.click()); setPubStep(3); }, text: "<strong>Who can open it.</strong> Anyone with the link, or only people you invite by email. Expiry is under More options. Publish creates the link. If you have already published this same set, the button reads Update snapshot and the link stays the same." },
+    { label: "The visitor", d: "What the link shows to someone with no account.", target: "#viewer-who", enter: () => { if (!state.current || state.current.revoked) { ensurePublish(); setPubStep(2); document.querySelectorAll("#scan [data-fix]").forEach(b => b.click()); setPubStep(3); document.getElementById("publish-form").requestSubmit(); } else { closeAll(); } closeAll(); if (state.current) { state.current.gateOpened = true; state.current.vtab = "dash"; } show("viewer"); }, text: "<strong>The visitor.</strong> No account, and nothing re-runs. Open a copy lets them bring the work into their own Free Edition workspace." },
+    { label: "Published", d: "Views, update, revoke.", target: "#manage-body table", enter: () => { closeAll(); show("manage"); }, text: "<strong>Published.</strong> Every snapshot you have made, with view counts. Update one to the current draft, or revoke the link." },
+    { center: true, label: null, text: "That is the whole flow. Click any step above to go back to it." },
   ];
-  let tourIdx = -1;
-  const hl = document.getElementById("tour-hl"), card = document.getElementById("tour-card");
+  let tourIdx = -1, inEnter = false;
+  const hl = document.getElementById("tour-hl"), guide = document.getElementById("guide"), gList = document.getElementById("g-list");
+  const STEPS = TOUR.map((t, i) => ({ ...t, i })).filter(t => !t.center);
+  gList.innerHTML = STEPS.map((t, n) => `<li data-idx="${t.i}"><span class="n">${n + 1}</span><span><span class="l">${t.label}</span><span class="d">${t.d}</span></span></li>`).join("");
+  gList.querySelectorAll("li").forEach(li => li.addEventListener("click", () => startTour(+li.dataset.idx)));
   function closeAll() { document.querySelectorAll('.scrim[data-open="true"]').forEach(x => x.dataset.open = "false"); }
-  function ensurePublish() { if (document.getElementById("publish-scrim").dataset.open !== "true") { closeAll(); show("work"); openPublish(true); } }
+  function ensurePublish() { if (document.getElementById("publish-scrim").dataset.open !== "true") { closeAll(); show("work"); openPublish(true); state.sel.dash = true; state.sel.nb = true; state.sel.tables = [true, true, true]; state._renderIncl(); state._renderScan(); } }
   function startTour(i) { tourIdx = i; runStep(); }
-  function endTour() { tourIdx = -1; hl.hidden = true; card.hidden = true; }
-  function runStep() {
+  function endTour() { tourIdx = -1; hl.hidden = true; guide.hidden = true; document.getElementById("help-btn").setAttribute("aria-expanded", "false"); }
+  function runStep(skipEnter) {
     const st = TOUR[tourIdx]; if (!st) { endTour(); return; }
-    if (st.enter) st.enter();
-    document.getElementById("tour-step").textContent = `Step ${tourIdx + 1} of ${TOUR.length}`;
+    if (st.enter && !skipEnter) { inEnter = true; try { st.enter(); } finally { inEnter = false; } }
+    const stepNo = TOUR.slice(0, tourIdx + 1).filter(t => !t.center).length;
+    document.getElementById("tour-step").textContent = st.center ? "" : `Step ${stepNo} of ${STEPS.length}`;
     document.getElementById("tour-text").innerHTML = st.text;
     document.getElementById("tour-back").disabled = tourIdx === 0;
-    document.getElementById("tour-next").textContent = tourIdx === TOUR.length - 1 ? "Done" : (tourIdx === 0 ? "Start tour" : "Next");
-    document.getElementById("tour-skip").textContent = tourIdx === 0 ? "Explore on my own" : "Skip tour";
-    hl.hidden = false; card.hidden = false;
+    document.getElementById("tour-next").textContent = tourIdx === TOUR.length - 1 ? "Done" : (tourIdx === 0 ? "Start" : "Next");
+    gList.querySelectorAll("li").forEach(li => { const k = +li.dataset.idx; li.classList.toggle("done", k < tourIdx); if (k === tourIdx) li.setAttribute("aria-current", "step"); else li.removeAttribute("aria-current"); });
+    guide.hidden = false; document.getElementById("help-btn").setAttribute("aria-expanded", "true");
+    hl.hidden = !!st.center;
     requestAnimationFrame(() => requestAnimationFrame(place));
   }
-  function place() {
-    const st = TOUR[tourIdx]; if (!st) return;
-    const vw = window.innerWidth, vh = window.innerHeight;
-    if (st.center) {
-      hl.className = "tour-hl center"; hl.style.cssText = "top:50%;left:50%;width:0;height:0";
-      card.className = "tour-card center"; card.style.cssText = `top:${Math.max(24, vh / 2 - 90)}px;left:${vw / 2 - 200}px`;
-      return;
+  // when the person drives the real UI themselves, the guide follows along instead of pulling them back
+  function syncTour(label) {
+    if (tourIdx < 0 || inEnter) return;
+    const idx = TOUR.findIndex(t => t.label === label);
+    if (idx < 0 || idx === tourIdx) return;
+    tourIdx = idx; runStep(true);
+  }
+  function dodgeDialog() {
+    // keep the guide panel from covering an open dialog: slide it to the dialog's right edge, else its left
+    const dlg = document.querySelector('.scrim[data-open="true"] .dlg');
+    guide.style.left = ""; guide.style.right = "";
+    document.querySelectorAll(".dlg").forEach(x => { x.style.transform = ""; });
+    if (!dlg || guide.hidden) return;
+    const d = dlg.getBoundingClientRect(), gw = guide.offsetWidth, vw = window.innerWidth;
+    if (d.right + 8 + gw <= vw - 8) { guide.classList.remove("left"); guide.style.right = `${Math.max(16, vw - d.right - 8 - gw)}px`; }
+    else if (d.left - 8 - gw >= 8) { guide.classList.remove("left"); guide.style.left = `${d.left - 8 - gw}px`; guide.style.right = "auto"; }
+    else {
+      // no room beside the dialog: nudge the dialog left so the panel never covers its buttons
+      guide.classList.remove("left");
+      const need = d.right - (vw - 16 - gw) + 12;
+      if (need > 0) dlg.style.transform = `translateX(-${Math.min(need, Math.max(0, d.left - 8))}px)`;
     }
+  }
+  function place(noScroll) {
+    dodgeDialog();
+    const st = TOUR[tourIdx]; if (!st || st.center) { hl.hidden = true; return; }
     const el = document.querySelector(st.target);
-    if (!el) { hl.className = "tour-hl center"; hl.style.cssText = "top:50%;left:50%;width:0;height:0"; card.className = "tour-card center"; card.style.cssText = `top:${vh / 2 - 60}px;left:${vw / 2 - 200}px`; return; }
-    el.scrollIntoView({ block: "center", inline: "nearest" });
+    if (!el || !el.offsetParent) { hl.hidden = true; return; }
+    if (!noScroll) el.scrollIntoView({ block: "center", inline: "nearest" });
     const r = el.getBoundingClientRect(), pad = 6;
-    hl.className = "tour-hl"; hl.style.cssText = `top:${r.top - pad}px;left:${r.left - pad}px;width:${r.width + pad * 2}px;height:${r.height + pad * 2}px`;
-    const cw = 320, ch = card.offsetHeight || 140;
-    let left = Math.min(Math.max(12, r.left), vw - cw - 12);
-    let top = r.bottom + pad + 12, above = false;
-    if (top + ch > vh - 12) { top = r.top - pad - 12 - ch; above = true; }
-    if (top < 12) { top = 12; above = false; }
-    card.className = "tour-card" + (above ? " above" : ""); card.style.cssText = `top:${top}px;left:${left}px`;
+    hl.hidden = false; hl.style.cssText = `top:${r.top - pad}px;left:${r.left - pad}px;width:${r.width + pad * 2}px;height:${r.height + pad * 2}px`;
+    // keep the panel out of the way of what it is pointing at
+    const g = guide.getBoundingClientRect();
+    const overlaps = !(r.right < g.left || r.left > g.right || r.bottom < g.top || r.top > g.bottom);
+    guide.classList.toggle("left", overlaps && !guide.classList.contains("left"));
   }
   document.getElementById("tour-next").addEventListener("click", () => { tourIdx += 1; if (tourIdx >= TOUR.length) endTour(); else runStep(); });
   document.getElementById("tour-back").addEventListener("click", () => { if (tourIdx > 0) { tourIdx -= 1; runStep(); } });
-  document.getElementById("tour-skip").addEventListener("click", endTour);
-  document.getElementById("help-btn").addEventListener("click", () => { if (tourIdx >= 0) endTour(); toggleHelp(); });
+  document.getElementById("guide-x").addEventListener("click", endTour);
+  document.getElementById("help-btn").addEventListener("click", () => toggleHelp(guide.hidden));
   const acctBtn = document.getElementById("avatar-btn"), acctMenu = document.getElementById("acctmenu");
   acctBtn.addEventListener("click", e => { e.stopPropagation(); const open = acctMenu.hidden; acctMenu.hidden = !open; acctBtn.setAttribute("aria-expanded", String(open)); });
   document.addEventListener("click", e => { if (!acctMenu.hidden && !acctMenu.contains(e.target)) { acctMenu.hidden = true; acctBtn.setAttribute("aria-expanded", "false"); } });
@@ -1008,8 +1235,6 @@ ORDER BY 2 DESC`,
   document.getElementById("proto-tag").addEventListener("click", () => startTour(0));
   function openCopyFlow() {
     const sn = state.current; if (!sn) return;
-    const n = (sn.tables || []).filter(Boolean).length;
-    document.getElementById("signin-what").textContent = `${[sn.incDash ? "the dashboard and its queries" : "", sn.incNb ? "the notebook" : "", n ? `${n} source table${n > 1 ? "s" : ""}` : ""].filter(Boolean).join(", ").replace(/^./, c => c.toUpperCase())}, copied into your workspace as workspace.default.* — ready to run or edit.`;
     openDialog("signin-scrim");
   }
   document.getElementById("signin-go").addEventListener("click", () => {
@@ -1021,15 +1246,14 @@ ORDER BY 2 DESC`,
     toast(`Copied to Sam’s workspace: ${[sn.incDash ? "dashboard" : "", sn.incNb ? "notebook" : "", n ? `${n} table${n > 1 ? "s" : ""}` : ""].filter(Boolean).join(", ")} — on Sam’s own compute`);
   });
   document.getElementById("signin-create").addEventListener("click", () => toast("Demo: this would start Free Edition sign-up, then continue to the copy"));
-  document.getElementById("helppop-x").addEventListener("click", () => toggleHelp(false));
-  document.getElementById("replay-tour").addEventListener("click", () => { toggleHelp(false); startTour(0); });
-  document.querySelectorAll("#flow [data-go]").forEach(el => el.addEventListener("click", e => { e.stopPropagation(); toggleHelp(false); go(el.dataset.go); }));
-  window.addEventListener("resize", () => { if (tourIdx >= 0) place(); });
-  window.addEventListener("scroll", () => { if (tourIdx >= 0) place(); }, true);
+  window.addEventListener("resize", () => { if (tourIdx >= 0) place(true); });
+  window.addEventListener("scroll", () => { if (tourIdx >= 0) place(true); }, true);
+  document.addEventListener("click", () => { if (tourIdx >= 0) setTimeout(() => place(true), 60); });
+  document.addEventListener("click", () => { const fm = document.getElementById("file-menu"), fb = document.getElementById("nb-file"); if (fm && !fm.hidden) { fm.hidden = true; if (fb) fb.setAttribute("aria-expanded", "false"); } });
   document.addEventListener("keydown", e => { if (tourIdx < 0) return; if (e.key === "ArrowRight") document.getElementById("tour-next").click(); if (e.key === "ArrowLeft") document.getElementById("tour-back").click(); if (e.key === "Escape") endTour(); });
   restore();
   (function route() {
-    const v = new URLSearchParams(location.search).get("v");
+    const v = new URLSearchParams(location.search).get("s") || new URLSearchParams(location.search).get("v");
     if (v) {
       const sn = unpackSnap(v);
       if (sn) {
@@ -1037,7 +1261,7 @@ ORDER BY 2 DESC`,
         state.viaLink = true;
         show("viewer");
         const pb = document.querySelector(".previewbar .t");
-        pb.innerHTML = `<strong>Prototype</strong> <span>— you opened a snapshot link from a mockup of a proposed Databricks Free Edition feature. Nothing here is a real product.</span>`;
+        pb.innerHTML = `<strong>Prototype</strong> <span>— a snapshot link from a mockup of a proposed Free Edition feature. Not a real product.</span>`;
         document.querySelector(".previewbar .acts").innerHTML = `<button type="button" class="btn sm primary" id="open-proto">Open the full prototype</button>`;
         document.getElementById("open-proto").addEventListener("click", () => { history.replaceState(null, "", baseUrl()); state.viaLink = false; location.reload(); });
         return;
