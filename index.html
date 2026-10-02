@@ -367,7 +367,8 @@
   .vhead h2 { margin: 0 0 4px; font-size: 22px; font-weight: 600; letter-spacing: -.01em; }
   .vmeta { color: var(--muted); font-size: 12px; }
   .vdesc { color: var(--ink-2); margin-top: 4px; }
-  .vhead .actions { margin-left: auto; display: flex; gap: 6px; flex-wrap: wrap; }
+  .vhead .actions { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex: none; }
+  .vhead .actions .arow { display: flex; gap: 6px; align-items: center; white-space: nowrap; }
   .vbody { padding: 10px 24px 18px; }
   .vfoot { display: flex; align-items: center; gap: 16px; padding: 14px 24px; border-top: 1px solid var(--line); background: var(--bg-2); font-size: 12px; color: var(--muted); flex-wrap: wrap; }
   .vfoot .brand { display: flex; align-items: center; gap: 7px; color: var(--ink); font-weight: 600; }
@@ -920,7 +921,7 @@ ORDER BY 2 DESC`,
         <div class="ir sub"><label><input type="checkbox" id="inc-code" ${S.code ? "checked" : ""}> Code</label><span class="cnt">SQL and Python in every cell · viewers can toggle</span></div>`);
       if (nT) rows.push(`<div class="ir"><label>▤ Source tables <span class="cnt">${nT} table${nT > 1 ? "s" : ""}</span></label><select class="in" id="inc-data"><option value="full" ${S.dataMode === "full" ? "selected" : ""}>All rows</option><option value="preview" ${S.dataMode === "preview" ? "selected" : ""}>First 100 rows</option><option value="schema" ${S.dataMode === "schema" ? "selected" : ""}>Columns only</option></select></div>
         ${TABLES.map((t, i) => S.tables[i] ? `<div class="ir sub"><label><code>${t.name}</code></label><span class="cnt">${t.rows} rows · ${t.size}${t.pii ? " · contains personal data" : ""}</span><button type="button" class="rm" data-rm="t${i}" aria-label="Remove ${t.name}">×</button></div>` : "").join("")}`);
-      if (usesTables) { const m = 3 - nT; rows.push(`<div class="ir hint"><span>${S.dash ? "The dashboard" : "The notebook"} reads ${m === 3 ? "3 tables that aren’t" : m === 1 ? "1 more table that isn’t" : `${m} more tables that aren’t`} in the snapshot — viewers can’t run it without them.</span><button type="button" class="btn sm" id="add-tables" style="white-space:nowrap">Add ${m === 3 ? "the tables" : m === 1 ? "the table" : "them"}</button></div>`); }
+      if (usesTables) { const m = 3 - nT; rows.push(`<div class="ir hint"><span>${S.dash ? "The dashboard" : "The notebook"} reads ${m === 3 ? "3 tables that aren’t" : m === 1 ? "1 more table that isn’t" : `${m} more tables that aren’t`} in the snapshot. Viewers still see every result; only someone who opens a copy would need them to re-run it.</span><button type="button" class="btn sm" id="add-tables" style="white-space:nowrap">Add ${m === 3 ? "the tables" : m === 1 ? "the table" : "them"}</button></div>`); }
       incl.innerHTML = (S.dash || S.nb || nT) ? rows.join("") : `<div class="empty-sel">Nothing selected yet — tick a dashboard, notebook or tables above.</div>`;
       document.querySelectorAll("[data-pick]").forEach(c => { const k = c.dataset.pick; c.checked = k === "dash" ? S.dash : k === "nb" ? S.nb : S.tables[+k.slice(1)]; });
       const csvEl = document.getElementById("inc-csv"); if (csvEl) csvEl.checked = !!S.csv;
@@ -1115,7 +1116,7 @@ ORDER BY 2 DESC`,
     const main = `<div class="subtabs" role="tablist">${tabs.map((t, i) => `${i === 1 && tabs[0][0] === "dash" && t[0] !== "nb" ? '<span class="sep"></span>' : ""}<button type="button" role="tab" aria-selected="${s.vtab === t[0]}" data-vtab="${t[0]}">${t[1]}</button>`).join("")}<span style="flex:1"></span><span class="draft">frozen at publish time · nothing re-runs</span></div>${content}`;
     body.innerHTML = `
       <div class="vhead"><div><h2>${esc(s.title)}</h2><div class="vmeta">${s.showName ? "Grace L. · " : ""}Published ${date} · Snapshot · Expires ${expiryDate(s)}${s.updated ? " · Updated " + s.updated.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""}${s.hiddenPii ? " · 1 column removed by the author" : ""}${s.hiddenSecret ? " · 1 cell output hidden by the author" : ""}</div>${s.desc ? `<div class="vdesc">${esc(s.desc)}</div>` : ""}</div>
-        <div class="actions">${s.csv && s.incNb ? `<button type="button" class="btn sm">Download .ipynb</button>` : ""}<span class="viewtog-note" style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><button type="button" class="btn sm primary" id="open-copy">Open a copy in your workspace</button><span class="draft" style="font-size:11px">Needs a free Databricks account. Viewing does not.</span></span></div></div>
+        <div class="actions"><div class="arow">${s.csv && s.incNb ? `<button type="button" class="btn sm">Download .ipynb</button>` : ""}<button type="button" class="btn sm primary" id="open-copy">Open a copy in your workspace</button></div><span class="draft" style="font-size:11px">Needs a free Databricks account. Viewing does not.</span></div></div>
       <div class="vbody">${main}</div>
       <div class="vfoot"><span class="brand"><span class="mark" aria-hidden="true"></span>Made with Databricks Free Edition</span><span>Free for students, educators and hobbyists.</span><span class="right"><a href="#" onclick="return false">Report this page</a>${s.aud === "link" ? ` · <a href="#" onclick="return false">Try it yourself — it’s free</a>` : ` · Shared privately with ${esc(s.emails.join(", "))}`}</span></div>`;
     body.querySelectorAll("[data-vtab]").forEach(b => b.addEventListener("click", () => { s.vtab = b.dataset.vtab; s.views -= 1; renderViewer(); }));
